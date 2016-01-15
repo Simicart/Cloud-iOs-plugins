@@ -85,10 +85,10 @@
     if(!cell){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         if([identifier isEqualToString:@"apple_pay"]){
-            cell.textLabel.text = @"Apple Pay";
+            cell.textLabel.text = @"Pay with Apple Pay";
 
         }else if([identifier isEqualToString:@"paypal"]){
-            cell.textLabel.text = @"Paypal";
+            cell.textLabel.text = @"Pay with Paypal and Card";
         }
         else{
             
@@ -101,11 +101,11 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     UILabel* lblHeader = [UILabel new];
-    lblHeader.text = SCLocalizedString(@"BRAINTREE");
-    lblHeader.backgroundColor = [UIColor lightGrayColor];
+    lblHeader.text = SCLocalizedString(@"Braintree");
+    lblHeader.backgroundColor = [UIColor blackColor];
     lblHeader.textColor = [UIColor whiteColor];
     lblHeader.textAlignment = NSTextAlignmentCenter;
-    lblHeader.font = [UIFont fontWithName:@"Helvetica-Bold" size:17];
+    lblHeader.font = [UIFont fontWithName:@"Helvetica-Bold" size:30];
     return lblHeader;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
@@ -191,7 +191,7 @@ requestsPresentationOfViewController:(UIViewController *)viewController {
 // Required
 - (void)paymentDriver:(id)paymentDriver
 requestsDismissalOfViewController:(UIViewController *)viewController {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil]; 
 }
 
 #pragma mark - BTAppSwitchDelegate

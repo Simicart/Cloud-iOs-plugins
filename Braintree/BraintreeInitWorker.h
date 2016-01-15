@@ -12,7 +12,7 @@
 #import "BraintreeUI.h"
 #import "BTCardClient.h"
 #import "SimiBraintreeModel.h"
-#import <SimiCartBundle/SimiGlobalVar.h>
+#import <SimiCartBundle/SimiGlobalVar.h> 
 
 @interface BraintreeInitWorker : NSObject
 
