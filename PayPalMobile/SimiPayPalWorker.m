@@ -32,37 +32,33 @@
 }
 
 - (void)didReceiveNotification:(NSNotification *)noti{
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:noti.name object:nil];
-   
-        payment = [noti.userInfo valueForKey:@"payment"];
-        if ([[payment valueForKey:@"method_code"] isEqualToString:@"paypal"]) {
-            if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
-                payPalAppKey = [payment valueForKey:@"client_id"];
-                payPalReceiverEmail = [payment valueForKey:@"paypal_email"];
-                BOOL isSandbox = [[payment valueForKey:@"sandbox"] boolValue];
-                @try {
-                    if (isSandbox) {
-                        [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentSandbox : payPalAppKey}];
-                        [PayPalMobile preconnectWithEnvironment:PayPalEnvironmentSandbox];
-                    }else{
-                        [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentProduction : payPalAppKey}];
-                        [PayPalMobile preconnectWithEnvironment:PayPalEnvironmentProduction];
-                    }
+    payment = [noti.userInfo valueForKey:@"payment"];
+    if ([[payment valueForKey:@"method_code"] isEqualToString:@"paypal"]) {
+        if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
+            payPalAppKey = [payment valueForKey:@"client_id"];
+            payPalReceiverEmail = [payment valueForKey:@"paypal_email"];
+            BOOL isSandbox = [[payment valueForKey:@"sandbox"] boolValue];
+            @try {
+                if (isSandbox) {
+                    [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentSandbox : payPalAppKey}];
+                    [PayPalMobile preconnectWithEnvironment:PayPalEnvironmentSandbox];
+                }else{
+                    [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentProduction : payPalAppKey}];
+                    [PayPalMobile preconnectWithEnvironment:PayPalEnvironmentProduction];
                 }
-                @catch (NSException *exception) {
-                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:SCLocalizedString(@"Sorry, PayPal is not now available. Please try again later.") delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                    alertView.tag = ALERT_VIEW_ERROR;
-                    [alertView show];
-                }
-                @finally {
-                    
-                }
-            }else if ([noti.name isEqualToString:DidPlaceOrderAfter]){
-                [self didPlaceOrder:noti];
             }
+            @catch (NSException *exception) {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:SCLocalizedString(@"Sorry, PayPal is not now available. Please try again later.") delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                alertView.tag = ALERT_VIEW_ERROR;
+                [alertView show];
+            }
+            @finally {
+                
+            }
+        }else if ([noti.name isEqualToString:DidPlaceOrderAfter]){
+            [self didPlaceOrder:noti];
         }
-    
+    }
 }
 
 - (void)didPlaceOrder:(NSNotification *)noti{
@@ -137,7 +133,6 @@
 - (void)didUpdatePaymentStatus:(NSNotification *)noti{
     SimiResponder *responder = [noti.userInfo valueForKey:@"responder"];
     order = noti.object;
-    NSLog(@"%@",viewController.navigationController.viewControllers);
     [viewController stopLoadingData];
     UIAlertView *alertView;
     if([[order valueForKey:@"status"] isEqualToString:@"errors"]){
@@ -188,7 +183,6 @@
         }
     }
     [self removeObserverForNotification:noti];
-    
 }
 
 #pragma mark PayPalPaymentDelegate methods
