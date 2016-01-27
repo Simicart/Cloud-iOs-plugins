@@ -67,14 +67,13 @@
 
 - (void)didPlaceOrder:(NSNotification *)noti{
     viewController = [noti.userInfo valueForKey:@"controller"];
-    NSLog(@"%@",viewController.navigationController.viewControllers);
     if (!viewController) {
         UINavigationController *navi = (UINavigationController *)[(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication] delegate] window] rootViewController] selectedViewController];
         viewController = [navi.viewControllers lastObject];
         
     }
+    viewController.isDiscontinue = YES;
     order = [noti.userInfo valueForKey:@"data"];
-//    SimiModel *fee = [order valueForKey:@"fee"];
     
     payPalAppKey = [payment valueForKey:@"client_id"];
     payPalReceiverEmail = [payment valueForKey:@"paypal_email"];

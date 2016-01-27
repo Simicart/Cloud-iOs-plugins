@@ -31,17 +31,12 @@
             if([[[noti.userInfo valueForKey:@"payment"] valueForKey:@"method_code"] isEqualToString:@"ccavenue"]){
                 order = [noti.userInfo objectForKey:@"data"];
                 currentVC = [noti.userInfo objectForKey:@"controller"];
+                currentVC.isDiscontinue = YES;
                 ccAvenueModel = [CCAvenueModel new];
                 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidGetRSACCAvenue object:ccAvenueModel];
                 [ccAvenueModel getRSAForOrder:[order valueForKey:@"_id"]];
                 [currentVC startLoadingData];
-//                UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-//                UIViewController* initVC = [storyBoard instantiateInitialViewController];
-////                CCInitViewController* initVC = [CCInitViewController new];
-//                [currentVC.navigationController pushViewController:initVC animated:YES];
-                
             }
-            
         }else if([noti.name isEqualToString:DidGetRSACCAvenue]){
             [self removeObserverForNotification:noti];
             CCWebViewController* ccWebViewController = [CCWebViewController new];

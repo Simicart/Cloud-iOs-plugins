@@ -432,7 +432,7 @@
     [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
         if(!error){
             lblLikeCount.textColor = [UIColor lightGrayColor];
-            lblLikeCount.text = [NSString stringWithFormat:@"%@",[[result objectForKey:@"share"] objectForKey:@"share_count"] ];
+            lblLikeCount.text = [NSString stringWithFormat:@"%@",[[result objectForKey:@"share"] objectForKey:@"share_count"]];
         }
 //        if([FBSDKAccessToken currentAccessToken])
 //        [[[FBSDKLoginManager alloc] init] logOut];
