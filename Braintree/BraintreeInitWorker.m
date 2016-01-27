@@ -32,7 +32,7 @@
         NSURL *url = [noti.userInfo valueForKey:@"url"];
         NSString* sourceApplication = [noti.name valueForKey:@"sourceApplication"];
         NSNumber* number = noti.object;
-        if ([url.scheme localizedCaseInsensitiveCompare:@"com.simicart.demo.payments"] == NSOrderedSame) {
+        if ([url.scheme localizedCaseInsensitiveCompare:[NSString stringWithFormat:@"%@.payments",[NSBundle mainBundle].bundleIdentifier]] == NSOrderedSame) {
             number = [NSNumber numberWithBool:[BTAppSwitch handleOpenURL:url sourceApplication:sourceApplication]];
         }
     }else if([noti.name isEqualToString:@"DidSelectPaymentMethod"]){
@@ -52,7 +52,7 @@
             currentVC = [noti.userInfo valueForKey:@"controller"];
             currentVC.isDiscontinue = YES;
             BTPaymentViewController* btPaymentVC = [[BTPaymentViewController alloc] init];
-            btPaymentVC.listBraintreePayments = [[NSMutableArray alloc] initWithArray:listBraintreePayments];;
+            btPaymentVC.listBraintreePayments = [[NSMutableArray alloc] initWithArray:listBraintreePayments];
             btPaymentVC.clientToken = clientToken;
             btPaymentVC.appleMerchant = appleMerchant;
             btPaymentVC.order = (SimiOrderModel* ) noti.object;
