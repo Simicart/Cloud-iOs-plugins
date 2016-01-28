@@ -8,6 +8,20 @@
 
 import UIKit
 
+extension UIColor {
+    convenience init(red: Int, green: Int, blue: Int) {
+        assert(red >= 0 && red <= 255, "Invalid red component")
+        assert(green >= 0 && green <= 255, "Invalid green component")
+        assert(blue >= 0 && blue <= 255, "Invalid blue component")
+        
+        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
+    }
+    
+    convenience init(netHex:Int) {
+        self.init(red:(netHex >> 16) & 0xff, green:(netHex >> 8) & 0xff, blue:netHex & 0xff)
+    }
+}
+
 class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate {
     // checkout
     var simiCheckOutModel : SimiCheckOutModel!
@@ -58,7 +72,6 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.view.addSubview(cvvField)
         self.view.addSubview(datePickerButton)
         
-        
         pickerContent.append([])
         for (var m = 0 ; m < months.count ; m++) {
             pickerContent[0].append(months[m].description)
@@ -67,6 +80,15 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         for (var y = 0 ; y < years.count ; y++) {
             pickerContent[1].append(years[y].description)
         }
+        // setup navigation back
+        
+        self.navigationController? .setNavigationBarHidden(false, animated:true)
+        let backButton = UIButton(type: UIButtonType.Custom)
+        backButton.addTarget(self, action: "cancelBtnHandle:", forControlEvents: UIControlEvents.TouchUpInside)
+        backButton.setTitle("Cancel", forState: UIControlState.Normal)
+        backButton.sizeToFit()
+        let backButtonItem = UIBarButtonItem(customView: backButton)
+        self.navigationItem.leftBarButtonItem = backButtonItem
         self.datePicker.delegate = self
         self.datePicker.hidden = true
         self.doneButton.hidden = true
@@ -79,11 +101,15 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.year = "2019"
     }
     
+    func cancelBtnHandle(sender : AnyObject) {
+        self.navigationController?.popToRootViewControllerAnimated(true)
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.dateField.enabled = false
         self.datePickerButton.addTarget(self, action: "dateFieldTouch", forControlEvents: UIControlEvents.TouchUpInside)
-        self.title = "Check Out"
+        self.title = "Checkout.com"
         self.view.backgroundColor = UIColor.groupTableViewBackgroundColor()
         // set view for subviews
         let originX : CGFloat = (self.view.frame.width / 375) * 10
@@ -100,6 +126,7 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.creditCardNumberLb.text = "Credit Card Number"
         self.creditCardNumberLb.textColor = UIColor.darkGrayColor()
         self.numberField.frame = CGRect(x: originX, y: creditCardNumberLb.frame.origin.y + creditCardNumberLb.frame.height + originY, width: self.view.frame.width - 2 * originX, height: fieldHeight)
+        self.numberField.keyboardType = UIKeyboardType.NumberPad
         self.numberField.borderStyle = UITextBorderStyle.RoundedRect
         self.expiryDateLb.frame = CGRect(x: originX, y: numberField.frame.origin.y + numberField.frame.height + originY, width: (self.view.frame.width - 4 * originX) / 2, height: fieldHeight)
         self.expiryDateLb.text = "Expiry Date"
@@ -112,6 +139,7 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.dateField.borderStyle = UITextBorderStyle.RoundedRect
         self.datePickerButton.frame = self.dateField.frame
         self.cvvField.frame = CGRect(x: (self.view.frame.width - 4 * originX) / 2 + 3 * originX, y: cvvLb.frame.origin.y + cvvLb.frame.height + originY, width: (self.view.frame.width - 4 * originX) / 2, height: fieldHeight)
+        self.cvvField.keyboardType = UIKeyboardType.NumberPad
         self.cvvField.borderStyle = UITextBorderStyle.RoundedRect
         self.cardTokenButton.frame = CGRect(x: originX, y: cvvField.frame.origin.y + cvvField.frame.height + 2 * originY, width: self.view.frame.width - 2 * originX, height: btnHeight)
         self.cardTokenButton.layer.cornerRadius = 5
@@ -119,6 +147,7 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.cardTokenButton.addTarget(self, action: "getCardToken", forControlEvents: UIControlEvents.TouchUpInside)
         self.cardTokenButton.setTitle("Pay", forState: UIControlState.Normal)
         self.cardTokenButton.backgroundColor = UIColor.greenColor()
+        self.cardTokenButton.backgroundColor = SimiGlobalVar().themeColor()
         self.cardTokenButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.doneButton.frame = CGRect(x: originX, y: self.view.frame.height - 120, width: self.view.frame.width - 2 * originY, height: btnHeight)
         self.doneButton.layer.cornerRadius = 5

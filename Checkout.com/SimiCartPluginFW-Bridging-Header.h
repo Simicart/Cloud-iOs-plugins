@@ -7,3 +7,4 @@
 #import "SimiCheckOutModel.h"
 #import "SimiOrderModel.h"
 #import "SCThankYouPageViewController.h"
+#import "SimiGlobalVar.h"
