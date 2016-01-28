@@ -86,43 +86,47 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.title = "Check Out"
         self.view.backgroundColor = UIColor.groupTableViewBackgroundColor()
         // set view for subviews
-        self.nameLb.frame = CGRectMake(10, 50, self.view.frame.width - 20, 30)
+        let originX : CGFloat = (self.view.frame.width / 375) * 10
+        let originY : CGFloat = 10
+        let fieldHeight : CGFloat = 30
+        let btnHeight : CGFloat = 50
+        self.nameLb.frame = CGRectMake(originX, 0, self.view.frame.width - 2 * originX, fieldHeight)
         self.nameLb.textColor = UIColor.darkGrayColor()
         self.nameLb.text = "Name"
-        self.nameField.frame = CGRect(x: 10, y: nameLb.frame.origin.y + nameLb.frame.height + 10, width: self.view.frame.width - 20, height: 30)
+        self.nameField.frame = CGRect(x: originX, y: nameLb.frame.origin.y + nameLb.frame.height + originY, width: self.view.frame.width - 2 * originX, height: fieldHeight)
         self.nameField.borderStyle = UITextBorderStyle.RoundedRect
         
-        self.creditCardNumberLb.frame = CGRect(x: 10, y: nameField.frame.origin.y + nameField.frame.height + 10, width: self.view.frame.width - 20, height: 30)
+        self.creditCardNumberLb.frame = CGRect(x: originX, y: nameField.frame.origin.y + nameField.frame.height + originY, width: self.view.frame.width - 2 * originX, height: fieldHeight)
         self.creditCardNumberLb.text = "Credit Card Number"
         self.creditCardNumberLb.textColor = UIColor.darkGrayColor()
-        self.numberField.frame = CGRect(x: 10, y: creditCardNumberLb.frame.origin.y + creditCardNumberLb.frame.height + 10, width: self.view.frame.width - 20, height: 30)
+        self.numberField.frame = CGRect(x: originX, y: creditCardNumberLb.frame.origin.y + creditCardNumberLb.frame.height + originY, width: self.view.frame.width - 2 * originX, height: fieldHeight)
         self.numberField.borderStyle = UITextBorderStyle.RoundedRect
-        self.expiryDateLb.frame = CGRect(x: 10, y: numberField.frame.origin.y + numberField.frame.height + 10, width: (self.view.frame.width - 40) / 2, height: 30)
+        self.expiryDateLb.frame = CGRect(x: originX, y: numberField.frame.origin.y + numberField.frame.height + originY, width: (self.view.frame.width - 4 * originX) / 2, height: fieldHeight)
         self.expiryDateLb.text = "Expiry Date"
         self.expiryDateLb.textColor = UIColor.darkGrayColor()
-        self.cvvLb.frame = CGRect(x: (self.view.frame.width - 40) / 2 + 30, y: numberField.frame.origin.y + numberField.frame.height + 10, width: (self.view.frame.width - 40) / 2, height: 30)
+        self.cvvLb.frame = CGRect(x: (self.view.frame.width - 4 * originX) / 2 + 3 * originX, y: numberField.frame.origin.y + numberField.frame.height + originY, width: (self.view.frame.width - 4 * originX) / 2, height: fieldHeight)
         self.cvvLb.text = "CVV"
         self.cvvLb.textColor = UIColor.darkGrayColor()
         
-        self.dateField.frame = CGRect(x: 10, y: expiryDateLb.frame.origin.y + expiryDateLb.frame.height + 10, width: (self.view.frame.width - 40) / 2, height: 30)
+        self.dateField.frame = CGRect(x: originX, y: expiryDateLb.frame.origin.y + expiryDateLb.frame.height + originY, width: (self.view.frame.width - 4 * originX) / 2, height: fieldHeight)
         self.dateField.borderStyle = UITextBorderStyle.RoundedRect
         self.datePickerButton.frame = self.dateField.frame
-        self.cvvField.frame = CGRect(x: (self.view.frame.width - 40) / 2 + 30, y: cvvLb.frame.origin.y + cvvLb.frame.height + 10, width: (self.view.frame.width - 40) / 2, height: 30)
+        self.cvvField.frame = CGRect(x: (self.view.frame.width - 4 * originX) / 2 + 3 * originX, y: cvvLb.frame.origin.y + cvvLb.frame.height + originY, width: (self.view.frame.width - 4 * originX) / 2, height: fieldHeight)
         self.cvvField.borderStyle = UITextBorderStyle.RoundedRect
-        self.cardTokenButton.frame = CGRect(x: 10, y: cvvField.frame.origin.y + cvvField.frame.height + 20, width: self.view.frame.width - 20, height: 50)
+        self.cardTokenButton.frame = CGRect(x: originX, y: cvvField.frame.origin.y + cvvField.frame.height + 2 * originY, width: self.view.frame.width - 2 * originX, height: btnHeight)
         self.cardTokenButton.layer.cornerRadius = 5
         self.cardTokenButton.enabled = true
         self.cardTokenButton.addTarget(self, action: "getCardToken", forControlEvents: UIControlEvents.TouchUpInside)
         self.cardTokenButton.setTitle("Pay", forState: UIControlState.Normal)
         self.cardTokenButton.backgroundColor = UIColor.greenColor()
         self.cardTokenButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        self.doneButton.frame = CGRect(x: 10, y: self.view.frame.height - 120, width: self.view.frame.width - 20, height: 50)
+        self.doneButton.frame = CGRect(x: originX, y: self.view.frame.height - 120, width: self.view.frame.width - 2 * originY, height: btnHeight)
         self.doneButton.layer.cornerRadius = 5
         self.doneButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
         self.doneButton.setTitle("Done", forState: UIControlState.Normal)
         self.doneButton.backgroundColor = UIColor.blueColor()
         self.doneButton.addTarget(self, action: "doneButtonHandle", forControlEvents: UIControlEvents.TouchUpInside)
-        self.datePicker.frame = CGRect(x: 0, y: self.view.frame.width - 100, width: self.view.frame.width, height: 150)
+        self.datePicker.frame = CGRect(x: originX, y: self.dateField.frame.origin.y + 2 * originY, width: self.dateField.frame.width, height: 150)
     }
     
     override func viewDidAppear(animated: Bool) {
