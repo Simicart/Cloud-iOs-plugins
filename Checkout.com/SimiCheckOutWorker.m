@@ -10,7 +10,7 @@
 #import "SimiOrderModel.h"
 #import "SimiCheckOutModel.h"
 #import <SimiCartBundle/SCAppDelegate.h>
-#import "SimiCartPluginFW-Swift.h"
+#import "Cloud-Swift.h"
 #import "SCThankYouPageViewController.h"
 
 @implementation SimiCheckOutWorker {
