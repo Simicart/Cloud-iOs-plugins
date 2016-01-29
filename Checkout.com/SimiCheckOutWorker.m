@@ -10,14 +10,11 @@
 #import "SimiOrderModel.h"
 #import "SimiCheckOutModel.h"
 #import <SimiCartBundle/SCAppDelegate.h>
-#import "SimiCartPluginFW-Swift.h"
+#import "Cloud-Swift.h"
 #import "SCThankYouPageViewController.h"
 
 @implementation SimiCheckOutWorker {
     SimiModel *payment;
-    NSString *payPalAppKey;
-    NSString *payPalReceiverEmail;
-    NSString *bnCode;
     SimiViewController *viewController;
     SimiOrderModel *order;
     SimiCheckOutModel *model;
@@ -44,7 +41,6 @@
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [alertView show];
         } else {
-//            NSLog(@"publish key : %@", [model valueForKey:@"public_key"]);
             publishKey = [model valueForKey:@"public_key"];
         }
     } else if ([noti.name isEqualToString:@"DidCreateCheckOutPaymentConfig"]) {
@@ -92,12 +88,6 @@
 }
 
 -(void)didCreatePayment:(NSNotification *)noti{
-    //        NSLog(@"status : %@", responder.status);
-    //        if (![responder.status isEqualToString:@"SUCCESS"]) {
-    //            .
-    //            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:@"Some thing wrong. Please try again" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    //            [alertView show];
-    //        }
     SimiResponder *responder = [noti.userInfo objectForKey:@"responder"];
     viewController = [noti.userInfo valueForKey:@"controller"];
     NSLog(@"%@",viewController.navigationController.viewControllers);
