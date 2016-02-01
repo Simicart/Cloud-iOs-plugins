@@ -8,8 +8,7 @@
 
 #import <SimiCartBundle/SimiCartBundle.h>
 
-@interface SimiPayUViewController : UIViewController<UIWebViewDelegate>
+@interface SimiPayUViewController : SimiViewController<UIWebViewDelegate>
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) NSString *stringURL;
-@property (nonatomic, strong) UIActivityIndicatorView *loadingView;
 @end

@@ -16,7 +16,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self startLoading];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     self.title = @"PayU";
     UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -41,15 +40,14 @@
     NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url];
     [_webView loadRequest:request];
     [self.view addSubview:_webView];
+    [self startLoadingData];
     
 }
 
 #pragma mark UIWebView Delegate
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    NSLog(@"%@",request);
     NSString *stringRequest = [NSString stringWithFormat:@"%@",request];
-    NSLog(@"string request : %@", stringRequest);
     if ([stringRequest containsString:@"sessionId"]) {
 //        [self stopLoading];
     }
@@ -69,13 +67,13 @@
 }
 
 -(void)webViewDidStartLoad:(UIWebView *)webView {
-    [self startLoading];
+    [self startLoadingData];
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-    [self stopLoading];
+    [self stopLoadingData];
 }
-
+/*
 -(void)startLoading {
     if (!self.loadingView.isAnimating) {
         CGRect frame = self.view.frame;
@@ -94,7 +92,7 @@
     [self.loadingView stopAnimating];
     [self.loadingView removeFromSuperview];
 }
-
+*/
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
