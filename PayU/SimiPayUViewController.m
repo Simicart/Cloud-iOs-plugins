@@ -16,6 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self startLoading];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     self.title = @"PayU";
     UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -40,7 +41,7 @@
     NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url];
     [_webView loadRequest:request];
     [self.view addSubview:_webView];
-    [self startLoading];
+    
 }
 
 #pragma mark UIWebView Delegate
@@ -50,7 +51,7 @@
     NSString *stringRequest = [NSString stringWithFormat:@"%@",request];
     NSLog(@"string request : %@", stringRequest);
     if ([stringRequest containsString:@"sessionId"]) {
-        [self stopLoading];
+//        [self stopLoading];
     }
     if ([stringRequest containsString:@"return"]) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"SUCCESS") message:SCLocalizedString(@"Thank your for purchase") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
@@ -65,6 +66,14 @@
         return NO;
     }
     return  YES;
+}
+
+-(void)webViewDidStartLoad:(UIWebView *)webView {
+    [self startLoading];
+}
+
+-(void)webViewDidFinishLoad:(UIWebView *)webView {
+    [self stopLoading];
 }
 
 -(void)startLoading {

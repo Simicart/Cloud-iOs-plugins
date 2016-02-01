@@ -32,7 +32,8 @@
 
 - (void)didReceiveNotification:(NSNotification *)noti{
     if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
-        //
+        // neu co the thi get continue link tai day luon.
+        
     } else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]) {
         [self didPlaceOrder:noti];
     } else if ([noti.name isEqualToString:@"DidGetPayUDirectLinkConfig"]) {
@@ -48,7 +49,6 @@
             viewController.isDiscontinue = YES;
             UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
             [(UINavigationController *)currentVC pushViewController:viewController animated:YES];
-//            viewController.navigationItem.title = @"PayU";
         }
     }
 }
@@ -68,7 +68,6 @@
             model = [[SimiPayUModel alloc] init];
         }
         [model getDirectLink:param];
-//    order = noti.object;
     }
 }
 
