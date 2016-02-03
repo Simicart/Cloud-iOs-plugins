@@ -36,9 +36,9 @@
             [orderViewController.navigationController pushViewController:viewController animated:YES];
             viewController.navigationItem.title = @"Klarna";
             if([[[SimiGlobalVar sharedInstance] currencyCode] isEqualToString:@"USD"] || [[[SimiGlobalVar sharedInstance] currencyCode] isEqualToString:@"GBP"])
-                viewController.url = [NSString stringWithFormat:@"%@klarna-us/index?order_id=%@&token=%@",kCloudBaseURL, [order valueForKey:@"_id"], kSimiKey];
+                viewController.url = [NSString stringWithFormat:@"http://dev-manage.jajahub.com/klarna/index?order_id=%@&token=%@", [order valueForKey:@"_id"], kSimiKey];
             else
-                viewController.url = [NSString stringWithFormat:@"%@klarna/index?order_id=%@&token=%@",kCloudBaseURL, [order valueForKey:@"_id"], kSimiKey];
+                viewController.url = [NSString stringWithFormat:@" http://dev-manage.jajahub.com/klarna/index?order_id=%@&token=%@", [order valueForKey:@"_id"], kSimiKey];
         }
     }
 }
