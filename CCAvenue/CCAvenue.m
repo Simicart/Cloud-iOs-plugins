@@ -35,12 +35,7 @@
                 ccAvenueModel = [CCAvenueModel new];
                 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidGetRSACCAvenue object:ccAvenueModel];
                 [ccAvenueModel getRSAForOrder:[order valueForKey:@"_id"]];
-                [currentVC startLoadingData];
-//                UIStoryboard* storyBoard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-//                UIViewController* initVC = [storyBoard instantiateInitialViewController];
-////                CCInitViewController* initVC = [CCInitViewController new];
-//                [currentVC.navigationController pushViewController:initVC animated:YES];
-                
+                [currentVC startLoadingData];                
             }
             
         }else if([noti.name isEqualToString:DidGetRSACCAvenue]){

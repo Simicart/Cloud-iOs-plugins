@@ -16,6 +16,8 @@
 @implementation CCWebViewController
 {
     CCAvenueModel* avenueModel;
+    UIBarButtonItem *backItem;
+    UIActivityIndicatorView* simiLoading;
 }
 @synthesize rsaKey;@synthesize accessCode;@synthesize merchantId;@synthesize orderId;
 @synthesize amount;@synthesize currency;@synthesize redirectUrl;@synthesize cancelUrl;
@@ -68,6 +70,19 @@
     
     [_viewWeb loadRequest:request];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidUpdateCCAvenuePayment object:nil];
+    
+    self.navigationItem.hidesBackButton = YES;
+    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
+    backButton.title = @"Cancel";
+    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
+    [leftBarButtons addObjectsFromArray:@[backButton]];
+    self.navigationItem.leftBarButtonItems = leftBarButtons;
+}
+
+-(void) cancelPayment:(id) sender{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    [alertView show];
+    alertView.tag = 0;
 }
 
 
@@ -76,8 +91,8 @@
     NSString *string = webView.request.URL.absoluteString;
     if ([string rangeOfString:@"/ccavResponseHandler.jsp"].location != NSNotFound) {
         NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
-        
-        avenueModel = [CCAvenueModel new];
+        if(!avenueModel)
+            avenueModel = [CCAvenueModel new];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidUpdateCCAvenuePayment object:nil];
         [self startLoadingData];
         if (([html rangeOfString:@"Aborted"].location != NSNotFound) ||
@@ -127,5 +142,48 @@
         [alert show];
     }
 }
+
+- (void)startLoadingData{
+    if (!simiLoading.isAnimating) {
+        CGRect frame = self.view.frame;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && self.navigationController) {
+            if (frame.size.width > self.navigationController.view.frame.size.width) {
+                frame = self.navigationController.view.frame;
+            }
+        }
+        
+        simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        simiLoading.hidesWhenStopped = YES;
+        simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
+        [self.view addSubview:simiLoading];
+        self.view.userInteractionEnabled = NO;
+        [simiLoading startAnimating];
+        self.view.alpha = 0.5;
+        
+    }
+}
+
+- (void)stopLoadingData{
+    self.view.userInteractionEnabled = YES;
+    self.view.alpha = 1;
+    [simiLoading stopAnimating];
+    [simiLoading removeFromSuperview];
+}
+
+//UIAlertViewDelegate
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == 0){
+        if(buttonIndex == 0){
+            
+        }else if(buttonIndex == 1){
+            if(!avenueModel)
+                avenueModel = [CCAvenueModel new];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidUpdateCCAvenuePayment object:nil];
+            [self startLoadingData];
+            [avenueModel updatePaymentWithOrder:orderId status:@"2"];
+        }
+    }
+}
+
 
 @end

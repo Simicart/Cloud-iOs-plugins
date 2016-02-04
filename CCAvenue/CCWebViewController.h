@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "CCAvenueModel.h"
 #import <SimiCartBundle/SCThankyouPageViewController.h>
-@interface CCWebViewController : SimiViewController <UIWebViewDelegate>
+@interface CCWebViewController : UIViewController <UIWebViewDelegate, UIAlertViewDelegate>
     @property (strong, nonatomic) IBOutlet UIWebView *viewWeb;
     @property (strong, nonatomic) NSString *accessCode;
     @property (strong, nonatomic) NSString *merchantId;
@@ -19,6 +19,7 @@
     @property (strong, nonatomic) NSString *redirectUrl;
     @property (strong, nonatomic) NSString *cancelUrl;
     @property (strong, nonatomic) NSString *rsaKey;
-@property (strong, nonatomic) CCAvenueModel* ccAvenueModel;
+    @property (strong, nonatomic) CCAvenueModel* ccAvenueModel;
+    
 
 @end
