@@ -16,7 +16,8 @@
     SimiModel *payment;
     SimiPayUIndianModel *model;
     NSDictionary *paymentData;
-    NSString *paymentHash;
+    NSDictionary *paymentHash;
+    SimiViewController *viewController;
 }
 
 - (id)init
@@ -68,21 +69,39 @@
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [alertView show];
         } else {
-            paymentHash = [model valueForKey:@"payment_hash"];
+            paymentHash = [model valueForKey:@"hash"];
+            if (paymentHash != nil) {
+                self.hashDict = paymentHash;
+            }
             if (paymentData != nil) {
                 paymentData = nil;
             }
             paymentData = [model valueForKey:@"data"];
-            NSLog(@"payment hash : %@", paymentHash);
-                self.hashDict = @{
-                                  @"payment_hash" : paymentHash
-                                  };
+            
+//                self.hashDict = @{
+//                                  @"payment_hash" : paymentHash,
+//                                  @"check_offer_status_hash" : [model valueForKey:@"check_offer_status_hash"],
+//                                  @"delete_user_card_hash" : [model valueForKey:@"delete_user_card_hash"],
+//                                  @"edit_user_card_hash" : [model valueForKey:@"edit_user_card_hash"],
+//                                  @"get_merchant_ibibo_codes_hash" : [model valueForKey:@"get_merchant_ibibo_codes_hash"],
+//                                  @"get_user_cards_hash" : [model valueForKey:@"get_user_cards_hash"],
+//                                  @"payment_related_details_for_mobile_sdk_hash" : [model valueForKey:@"payment_related_details_for_mobile_sdk_hash"],
+//                                  @"save_user_card_hash" : [model valueForKey:@"save_user_card_hash"],
+//                                  @"vas_for_mobile_sdk_hash" : [model valueForKey:@"vas_for_mobile_sdk_hash"],
+//                                  };
             [self didPlaceOrder:noti];
         }
     }
 }
 
 - (void)didPlaceOrder:(NSNotification *)noti {
+    viewController = [noti.userInfo valueForKey:@"controller"];
+    if (!viewController) {
+        UINavigationController *navi = (UINavigationController *)[(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication] delegate] window] rootViewController] selectedViewController];
+        viewController = [navi.viewControllers lastObject];
+        
+    }
+    viewController.isDiscontinue = YES;
 //    payment = [noti.userInfo valueForKey:@"payment"];
 //    if ([[[payment valueForKey:@"method_code"] uppercaseString] isEqualToString:@"PAYUBIZ"]) {
         PayUPaymentOptionsViewController *paymentOptionsVC = nil;
@@ -100,27 +119,27 @@
         }
         //Pass the parameters in paramDict in Key-Value pair as mentioned
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                      [paymentData valueForKey:@"productinfo"],@"productinfo",
-                                      [paymentData valueForKey:@"firstname"],@"firstname",
-                                      [paymentData valueForKey:@"amount"],@"amount",
-                                      [paymentData valueForKey:@"email"],@"email",
-                                      [paymentData valueForKey:@"phone"], @"phone",
-                                      [paymentData valueForKey:@"surl"],@"surl",
-                                      [paymentData valueForKey:@"furl"],@"furl",
-                                      // _txnID is your Transaction ID set by you inside the app
-                                      [paymentData valueForKey:@
+                                      [paymentData objectForKey:@"productinfo"],@"productinfo",
+                                      [paymentData objectForKey:@"firstname"],@"firstname",
+                                      [paymentData objectForKey:@"amount"],@"amount",
+                                      [paymentData objectForKey:@"email"],@"email",
+                                      @"", @"phone",
+                                      [paymentData objectForKey:@"surl"],@"surl",
+                                      [paymentData objectForKey:@"furl"],@"furl",
+                                      [paymentData objectForKey:@
                                        "txnid"],@"txnid",
                                       @"ra:ra",@"user_credentials",
-                                      @"offertest@1411",@"offer_key",
-                                      @"u1",@"udf1",
-                                      @"u2",@"udf2",
-                                      @"u3",@"udf3",
-                                      @"u4",@"udf4",
-                                      @"u5",@"udf5"
+                                      @"",@"offer_key",
+                                      @"",@"udf1",
+                                      @"",@"udf2",
+                                      @"",@"udf3",
+                                      @"",@"udf4",
+                                      @"",@"udf5"
                                       ,nil];
+    NSLog(@"param : %@", paramDict);
         paymentOptionsVC.parameterDict = paramDict;
         paymentOptionsVC.callBackDelegate = self;
-        paymentOptionsVC.totalAmount  = [[paymentData valueForKey:@"amount"] floatValue];
+        paymentOptionsVC.totalAmount  = [[paymentData objectForKey:@"amount"] floatValue];
         paymentOptionsVC.appTitle     = @"PayU test App";
         if(_hashDict)
             paymentOptionsVC.allHashDict = _hashDict;
@@ -139,6 +158,7 @@
     [currentVC.navigationController popToRootViewControllerAnimated:YES];
 }
 - (void) cancel:(NSDictionary *)info{
+    [viewController.navigationController popToRootViewControllerAnimated:YES];
     UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
     [currentVC.navigationController popToRootViewControllerAnimated:YES];
 }

@@ -547,6 +547,7 @@ typedef enum : NSUInteger {
     [postData appendString:[NSString stringWithFormat:@"hash=%@",hashStr]];
     
     NSLog(@"POST Data = %@",postData);
+//    postData=@"key=gtKFFx&var1=ra:ra&command=payment_related_details_for_mobile_sdk&hash=be01fec047f23ed6bc6b2dce1eabbe180a9848876be64a51f81145de8e6c6679ebb59bea45dfe9691fe624e1f842d42d1d474abc970aa6a03fe17aa900508064";
 
     
     //set request content type we MUST set this value.
