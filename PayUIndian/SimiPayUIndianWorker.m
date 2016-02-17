@@ -108,9 +108,10 @@
                                       [paymentData valueForKey:@"surl"],@"surl",
                                       [paymentData valueForKey:@"furl"],@"furl",
                                       // _txnID is your Transaction ID set by you inside the app
-                                      @"Ywism0Q9XC88qvy",@"txnid",
+                                      [paymentData valueForKey:@
+                                       "txnid"],@"txnid",
                                       @"ra:ra",@"user_credentials",
-                                      @"",@"offer_key",
+                                      @"offertest@1411",@"offer_key",
                                       @"u1",@"udf1",
                                       @"u2",@"udf2",
                                       @"u3",@"udf3",
