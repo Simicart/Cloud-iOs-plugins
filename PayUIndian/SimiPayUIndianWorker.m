@@ -150,9 +150,11 @@
 }
 
 - (void) success:(NSDictionary *)info{
+    /*
     [viewController.navigationController popToRootViewControllerAnimated:YES];
     UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
     [currentVC.navigationController popToRootViewControllerAnimated:YES];
+     */
 }
 - (void) failure:(NSDictionary *)info{
     [viewController.navigationController popToRootViewControllerAnimated:YES];
