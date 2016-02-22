@@ -1,16 +1,11 @@
-//
-//  KlarnaViewController.h
-//  SimiCartPluginFW
-//
-//  Created by NghiepLy on 7/14/15.
-//  Copyright (c) 2015 Trueplus. All rights reserved.
-//
+//Axe created 2016
 
 #import <SimiCartBundle/SimiCartBundle.h>
 #import <SimiCartBundle/SimiViewController.h>
 #import <SimiCartBundle/SimiResponder.h>
+#import <SimiCartBundle/SCThankYouPageViewController.h>
 
-@interface KlarnaViewController : SimiViewController<UIWebViewDelegate>
+@interface KlarnaViewController : UIViewController<UIWebViewDelegate>
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) NSString* url;
 @end

@@ -46,12 +46,12 @@
         vc.delegate = self;
         if(vc)
             [self presentViewController:vc animated:YES completion:nil];
-    }else if([identifier isEqualToString:@"paypal"]){
+    }else if([identifier isEqualToString:@"mastercard"]){
         BTDropInViewController* dropInVC = [[BTDropInViewController alloc] initWithAPIClient:self.braintreeClient];
         dropInVC.delegate = self;
         [self.navigationController pushViewController:dropInVC animated:YES];
     }
-    else{
+    else {
     
     }
 }
@@ -87,11 +87,11 @@
         if([identifier isEqualToString:@"apple_pay"]){
             cell.textLabel.text = @"Pay with Apple Pay";
 
-        }else if([identifier isEqualToString:@"paypal"]){
+        }else if([identifier isEqualToString:@"mastercard"]){
             cell.textLabel.text = @"Pay with Paypal and Card";
         }
-        else{
-            
+        else {
+            cell.textLabel.text = identifier;
         }
     }
 //    cell.textLabel.textAlignment = NSTextAlignmentCenter;

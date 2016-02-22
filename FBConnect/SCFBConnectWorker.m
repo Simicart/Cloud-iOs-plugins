@@ -98,7 +98,8 @@
     }
     else if([noti.name isEqualToString:@"DidLogin"])
     {
-            }
+        
+    }
     else if([noti.name isEqualToString:@"AutoLoginWithFacebook"])
     {
         
