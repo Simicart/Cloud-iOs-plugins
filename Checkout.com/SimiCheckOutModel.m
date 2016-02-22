@@ -18,7 +18,7 @@
 -(void)createCheckOutPaymentWithParam:(NSDictionary *)params {
     currentNotificationName = @"DidCreateCheckOutPaymentConfig";
     modelActionType = ModelActionTypeGet;
-    [(SimiCheckOutAPI *)[self getAPI] createCheckPutPaymentWithParam:params target:self selector:@selector(didFinishRequest:responder:)];
+    [(SimiCheckOutAPI *)[self getAPI] createCheckOutPaymentWithParam:params target:self selector:@selector(didFinishRequest:responder:)];
 }
 
 -(void)didFinishRequest:(NSObject *)responseObject responder:(SimiResponder *)responder {

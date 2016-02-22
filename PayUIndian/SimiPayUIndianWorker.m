@@ -150,10 +150,14 @@
 }
 
 - (void) success:(NSDictionary *)info{
+    /*
+    [viewController.navigationController popToRootViewControllerAnimated:YES];
     UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
     [currentVC.navigationController popToRootViewControllerAnimated:YES];
+     */
 }
 - (void) failure:(NSDictionary *)info{
+    [viewController.navigationController popToRootViewControllerAnimated:YES];
     UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
     [currentVC.navigationController popToRootViewControllerAnimated:YES];
 }
@@ -167,6 +171,7 @@
     NSLog(@"dataReceived from surl/furl:%@", noti.object);
     UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
     [currentVC.navigationController popToRootViewControllerAnimated:YES];
+    [viewController.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end
