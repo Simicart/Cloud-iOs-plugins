@@ -7,11 +7,11 @@
 //
 
 #import "SimiCheckOutWorker.h"
-#import "SimiOrderModel.h"
 #import "SimiCheckOutModel.h"
+#import <SimiCartBundle/SimiOrderModel.h>
 #import <SimiCartBundle/SCAppDelegate.h>
+#import <SimiCartBundle/SCThankYouPageViewController.h>
 #import "SimiCartPluginFW-Swift.h"
-#import "SCThankYouPageViewController.h"
 
 @implementation SimiCheckOutWorker {
     SimiModel *payment;
