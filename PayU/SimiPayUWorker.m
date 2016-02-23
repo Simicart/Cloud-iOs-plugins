@@ -42,13 +42,20 @@
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [alertView show];
         } else {
-            directLink = [model valueForKey:@"url"];
-            NSLog(@"direct link : %@", directLink);
-            SimiPayUViewController *viewController = [[SimiPayUViewController alloc] init];
-            viewController.stringURL = directLink;
-            viewController.isDiscontinue = YES;
-            UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-            [(UINavigationController *)currentVC pushViewController:viewController animated:YES];
+            if ([model valueForKey:@"errors"] != nil) {
+                NSDictionary *errors = [model valueForKey:@"errors"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please choose another payment.", [errors valueForKey:@"message"]] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [alertView show];
+            } else {
+                directLink = [model valueForKey:@"url"];
+                NSLog(@"direct link : %@", directLink);
+                SimiPayUViewController *viewController = [[SimiPayUViewController alloc] init];
+                viewController.stringURL = directLink;
+                viewController.isDiscontinue = YES;
+                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+                [(UINavigationController *)currentVC pushViewController:viewController animated:YES];
+            }
+            
         }
     }
 }

@@ -7,11 +7,11 @@
 //
 
 #import "SimiCheckOutWorker.h"
-#import "SimiOrderModel.h"
 #import "SimiCheckOutModel.h"
+#import <SimiCartBundle/SimiOrderModel.h>
 #import <SimiCartBundle/SCAppDelegate.h>
+#import <SimiCartBundle/SCThankYouPageViewController.h>
 #import "SimiCartPluginFW-Swift.h"
-#import "SCThankYouPageViewController.h"
 
 @implementation SimiCheckOutWorker {
     SimiModel *payment;
@@ -28,6 +28,8 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidCreateCheckOutPaymentConfig" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"CancelOrder" object:nil];
+        
     }
     return self;
 }
@@ -44,8 +46,15 @@
             publishKey = [model valueForKey:@"public_key"];
         }
     } else if ([noti.name isEqualToString:@"DidCreateCheckOutPaymentConfig"]) {
-        [self didCreatePayment:noti];
-    } else {
+//        [self didCreatePayment:noti];
+    } else if ([noti.name isEqualToString:@"CancelOrder"]) {
+        // get order id and call api cancel order
+        NSDictionary *orderInfo = noti.userInfo;
+        if (order == nil) {
+            order = [[SimiOrderModel alloc] init];
+        }
+        [order cancelAnOrder:[orderInfo objectForKey:@"order_id"]];
+    }else {
         payment = [noti.userInfo valueForKey:@"payment"];
         NSLog(@"payment_method : %@", payment);
         if ([[payment valueForKey:@"method_code"] isEqualToString:@"checkout"]) {

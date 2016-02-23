@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 extension UIColor {
     convenience init(red: Int, green: Int, blue: Int) {
@@ -22,7 +23,7 @@ extension UIColor {
     }
 }
 
-class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate {
+class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIAlertViewDelegate {
     // checkout
     var simiCheckOutModel : SimiCheckOutModel!
     var pickerContent: [[String]] = []
@@ -102,7 +103,18 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
     }
     
     func cancelBtnHandle(sender : AnyObject) {
-        self.navigationController?.popToRootViewControllerAnimated(true)
+        let alertView : UIAlertView = UIAlertView(title: "Are you sure want to cancel?", message: "", delegate: self, cancelButtonTitle: "Yes", otherButtonTitles: "No")
+        alertView.show()
+//        self.navigationController?.popToRootViewControllerAnimated(true)
+    }
+    
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex == alertView.cancelButtonIndex {
+            // call to api cancel order.
+            print("order data : \(self.orderData)");
+            NSNotificationCenter.defaultCenter().postNotificationName("CancelOrder", object: nil, userInfo: ["order_id" : self.orderData.objectForKey("_id") as! String])
+            self.navigationController?.popToRootViewControllerAnimated(true)
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -349,9 +361,9 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
             alertView.show()
             return
         }
+        self.startLoading()
         self.cardTokenButton.enabled = false
         self.edittingTf.resignFirstResponder()
-        self.startLoading()
         let ck = try? CheckoutKit.getInstance(publishKey as String)
         if ck == nil {
             self.cardTokenButton.enabled = true
@@ -381,6 +393,9 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
                         self.cardTokenButton.enabled = true
                     })
                 }
+            } else {
+                self.stopLoading()
+                self.cardTokenButton.enabled = true
             }
         }
     }

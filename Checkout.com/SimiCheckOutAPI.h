@@ -10,5 +10,5 @@
 
 @interface SimiCheckOutAPI : SimiAPI
 -(void)getPublishKeyWithParam:(NSDictionary *)params target:(id)target selector:(SEL)selector;
--(void)createCheckPutPaymentWithParam:(NSDictionary *)params target:(id)target selector:(SEL)selector;
+-(void)createCheckOutPaymentWithParam:(NSDictionary *)params target:(id)target selector:(SEL)selector;
 @end
