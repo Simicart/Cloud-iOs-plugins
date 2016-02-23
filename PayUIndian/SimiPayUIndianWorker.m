@@ -18,6 +18,8 @@
     NSDictionary *paymentData;
     NSDictionary *paymentHash;
     SimiViewController *viewController;
+    NSString *txn_id;
+    NSString *order_id;
 }
 
 - (id)init
@@ -41,14 +43,18 @@
     if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
         
     } else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]) {
+        viewController = [noti.userInfo valueForKey:@"controller"];
+        if (!viewController) {
+            UINavigationController *navi = (UINavigationController *)[(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication] delegate] window] rootViewController] selectedViewController];
+            viewController = [navi.viewControllers lastObject];
+        }
+        viewController.isDiscontinue = YES;
         order = [[SimiOrderModel alloc] init];
         order = [noti.userInfo valueForKey:@"data"];
         payment = [noti.userInfo valueForKey:@"payment"];
         if ([[[payment valueForKey:@"method_code"] uppercaseString] isEqualToString:@"PAYUBIZ"]) {
             NSDictionary *param = @{@"order_id" : [order objectForKey:@"_id"]};
-//            NSDictionary *param = @{@"order_id" : @"56b03703e2bc732f037b23cf"};
-            
-            self.isDiscontinue = YES;
+            order_id = [order objectForKey:@"_id"];
             if (model == nil) {
                 model = [[SimiPayUIndianModel alloc] init];
             }
@@ -77,18 +83,7 @@
                 paymentData = nil;
             }
             paymentData = [model valueForKey:@"data"];
-            
-//                self.hashDict = @{
-//                                  @"payment_hash" : paymentHash,
-//                                  @"check_offer_status_hash" : [model valueForKey:@"check_offer_status_hash"],
-//                                  @"delete_user_card_hash" : [model valueForKey:@"delete_user_card_hash"],
-//                                  @"edit_user_card_hash" : [model valueForKey:@"edit_user_card_hash"],
-//                                  @"get_merchant_ibibo_codes_hash" : [model valueForKey:@"get_merchant_ibibo_codes_hash"],
-//                                  @"get_user_cards_hash" : [model valueForKey:@"get_user_cards_hash"],
-//                                  @"payment_related_details_for_mobile_sdk_hash" : [model valueForKey:@"payment_related_details_for_mobile_sdk_hash"],
-//                                  @"save_user_card_hash" : [model valueForKey:@"save_user_card_hash"],
-//                                  @"vas_for_mobile_sdk_hash" : [model valueForKey:@"vas_for_mobile_sdk_hash"],
-//                                  };
+            txn_id = [paymentData objectForKey:@"txnid"];
             [self didPlaceOrder:noti];
         }
     }
@@ -99,7 +94,6 @@
     if (!viewController) {
         UINavigationController *navi = (UINavigationController *)[(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication] delegate] window] rootViewController] selectedViewController];
         viewController = [navi.viewControllers lastObject];
-        
     }
     viewController.isDiscontinue = YES;
 //    payment = [noti.userInfo valueForKey:@"payment"];
@@ -144,34 +138,63 @@
         if(_hashDict)
             paymentOptionsVC.allHashDict = _hashDict;
         _hashDict = nil;
-        UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-        [(UINavigationController *)currentVC pushViewController:paymentOptionsVC animated:YES];
-//    }
+    viewController.isDiscontinue = YES;
+    [viewController.navigationController pushViewController:paymentOptionsVC animated:YES];
+
 }
 
 - (void) success:(NSDictionary *)info{
-    /*
-    [viewController.navigationController popToRootViewControllerAnimated:YES];
-    UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-    [currentVC.navigationController popToRootViewControllerAnimated:YES];
-     */
+    NSMutableDictionary *updatePaymentParam = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                               order_id, @"order_id",
+                                               txn_id, @"txn_id",
+                                               @"1", @"status",
+                                               nil];
+    if (model == nil) {
+        model = [[SimiPayUIndianModel alloc] init];
+    }
+    [model updatePayment:updatePaymentParam];
 }
 - (void) failure:(NSDictionary *)info{
+    NSMutableDictionary *updatePaymentParam = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                               order_id, @"order_id",
+                                               txn_id, @"txn_id",
+                                               @"2", @"status",
+                                               nil];
+    if (model == nil) {
+        model = [[SimiPayUIndianModel alloc] init];
+    }
+    [model updatePayment:updatePaymentParam];
     [viewController.navigationController popToRootViewControllerAnimated:YES];
-    UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-    [currentVC.navigationController popToRootViewControllerAnimated:YES];
+
 }
 - (void) cancel:(NSDictionary *)info{
+    NSMutableDictionary *updatePaymentParam = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                               order_id, @"order_id",
+                                               txn_id, @"txn_id",
+                                               @"2", @"status",
+                                               nil];
+    if (model == nil) {
+        model = [[SimiPayUIndianModel alloc] init];
+    }
+    [model updatePayment:updatePaymentParam];
     [viewController.navigationController popToRootViewControllerAnimated:YES];
-    UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-    [currentVC.navigationController popToRootViewControllerAnimated:YES];
+
 }
 -(void)dataReceived:(NSNotification *)noti
 {
     NSLog(@"dataReceived from surl/furl:%@", noti.object);
-    UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-    [currentVC.navigationController popToRootViewControllerAnimated:YES];
-    [viewController.navigationController popToRootViewControllerAnimated:YES];
+    NSLog(@"order_id : %@", order_id);
+    NSMutableDictionary *updatePaymentParam = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                            order_id, @"order_id",
+                                            txn_id, @"txn_id",
+                                            @"1", @"status",
+                                               nil];
+    if (model == nil) {
+        model = [[SimiPayUIndianModel alloc] init];
+    }
+    [model updatePayment:updatePaymentParam];
+
+//    [viewController.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end
