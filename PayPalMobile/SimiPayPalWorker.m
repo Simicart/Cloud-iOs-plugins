@@ -91,7 +91,7 @@
         pay.amount = [[NSDecimalNumber alloc] initWithString:[NSString stringWithFormat:@"%.2f", [[order valueForKey:@"grand_total"] floatValue]]];
         pay.currencyCode = CURRENCY_CODE;
         pay.bnCode = bnCode;
-        pay.shortDescription = [NSString stringWithFormat:@"%@ #: %@", SCLocalizedString(@"Invoice"), [order valueForKey:@"_id"]];
+        pay.shortDescription = [NSString stringWithFormat:@"%@ #: %@", SCLocalizedString(@"Invoice"), [order valueForKey:@"seq_no"]];
         pay.intent = PayPalPaymentIntentSale;
         if ([[payment valueForKey:@"payment_action"] isEqualToString:@"1"]) {
             pay.intent = PayPalPaymentIntentAuthorize;
@@ -157,7 +157,7 @@
         if([[order valueForKey:@"status"] isEqualToString:@"pending"] || [[order valueForKey:@"status"] isEqualToString:@"paid"]){
             if(!((SCOrderViewController*)viewController).isNewCustomer){
                 SCThankYouPageViewController *thankVC = [[SCThankYouPageViewController alloc] init];
-                thankVC.number = [order valueForKey:@"_id"];
+                thankVC.number = [order valueForKey:@"seq_no"];
                 thankVC.order = order;
                 if(((SCOrderViewController*)viewController).checkoutGuest){
                     thankVC.isGuest = YES;

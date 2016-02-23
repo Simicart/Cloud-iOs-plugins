@@ -130,8 +130,7 @@
                      NSString *email = [result objectForKey:@"email"];
                      NSString *name = SCLocalizedString([result objectForKey:@"name"]);
                      if(customer == nil)
-                         customer = [[SimiCustomerModel alloc] init];
-                     
+                         customer = [SimiCustomerModel new];
 //                     NSDictionary *info = [[NSBundle mainBundle] infoDictionary];
 //                     NSString *bundleIdentifier = [NSString stringWithFormat:@"%@", [info objectForKey:@"CFBundleIdentifier"]];
 //                     KeychainItemWrapper *wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:bundleIdentifier accessGroup:nil];

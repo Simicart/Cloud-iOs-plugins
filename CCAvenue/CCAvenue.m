@@ -46,7 +46,7 @@
             ccWebViewController.merchantId = [ccAvenueModel valueForKey:@"merchant_id"];
             ccWebViewController.amount = [order valueForKey:@"grand_total"];
             ccWebViewController.currency = [[SimiGlobalVar sharedInstance] currencyCode];
-            ccWebViewController.orderId = [order valueForKey:@"_id"];
+            ccWebViewController.orderId = [order valueForKey:@"seq_id"];
             ccWebViewController.redirectUrl = @"http://122.182.6.216/merchant/ccavResponseHandler.jsp";
             ccWebViewController.cancelUrl = @"http://122.182.6.216/merchant/ccavResponseHandler.jsp";
             [currentVC.navigationController pushViewController:ccWebViewController animated:YES];
