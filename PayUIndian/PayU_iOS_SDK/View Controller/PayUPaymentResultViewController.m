@@ -88,7 +88,7 @@
     _resultWebView.scalesPageToFit = NO;
     _resultWebView.opaque = NO;
     _resultWebView.backgroundColor = [UIColor clearColor];
-    [[_resultWebView scrollView] setContentInset:UIEdgeInsetsMake(-64, 0, 0, 0)];
+    [[_resultWebView scrollView] setContentInset:UIEdgeInsetsMake(0, 0, 0, 0)];
 }
 - (void)dealloc {
 }

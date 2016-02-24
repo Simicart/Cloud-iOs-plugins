@@ -67,13 +67,15 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navigationController.navigationItem.title = _appTitle;
-    self.navigationItem.hidesBackButton = YES;
-    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
-    backButton.title = @"Cancel";
-    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
-    [leftBarButtons addObjectsFromArray:@[backButton]];
-    self.navigationItem.leftBarButtonItems = leftBarButtons;
+//    self.navigationController.navigationItem.title = _appTitle;
+//    self.navigationController.title = @"PayUBiz";
+//    self.navigationItem.hidesBackButton = YES;
+//    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
+//    backButton.title = @"Cancel";
+//    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
+//    [leftBarButtons addObjectsFromArray:@[backButton]];
+//    self.navigationItem.leftBarButtonItems = leftBarButtons;
+    
     _connectionSpecificDataObject = [[NSMutableData alloc] init];
     
     //setting up preferred Payment option tableView
