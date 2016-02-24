@@ -139,6 +139,8 @@
             paymentOptionsVC.allHashDict = _hashDict;
         _hashDict = nil;
     viewController.isDiscontinue = YES;
+//    [viewController.navigationController presentViewController:paymentOptionsVC animated:YES completion:nil];
+    paymentOptionsVC.orderId = [order objectForKey:@"_id"];
     [viewController.navigationController pushViewController:paymentOptionsVC animated:YES];
 
 }
@@ -168,6 +170,8 @@
 
 }
 - (void) cancel:(NSDictionary *)info{
+    // after payment success or failed. Not cancel an order.
+    /*
     NSMutableDictionary *updatePaymentParam = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                                order_id, @"order_id",
                                                txn_id, @"txn_id",
@@ -177,6 +181,7 @@
         model = [[SimiPayUIndianModel alloc] init];
     }
     [model updatePayment:updatePaymentParam];
+    */
     [viewController.navigationController popToRootViewControllerAnimated:YES];
 
 }

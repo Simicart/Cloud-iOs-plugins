@@ -12,18 +12,38 @@
 
 @end
 
-@implementation SimiPayUViewController
+@implementation SimiPayUViewController {
+    UIBarButtonItem *backItem;
+    UIActivityIndicatorView* simiLoading;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
-    self.title = @"PayU";
-    UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cancelBtn addTarget:self action:@selector(cancelBtnHandle) forControlEvents:(UIControlEventTouchUpInside)];
-    [cancelBtn setTitle:@"Cancel" forState:(UIControlStateNormal)];
-    [cancelBtn sizeToFit];
-    UIBarButtonItem *cancelButtonItem = [[UIBarButtonItem alloc] initWithCustomView:cancelBtn];
-    self.navigationItem.leftBarButtonItem = cancelButtonItem;
+    self.navigationItem.hidesBackButton = YES;
+    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
+    backButton.title = @"Cancel";
+    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
+    [leftBarButtons addObjectsFromArray:@[backButton]];
+    self.navigationItem.leftBarButtonItems = leftBarButtons;
+}
+
+-(void) cancelPayment:(id) sender{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    [alertView show];
+    alertView.tag = 0;
+}
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == 0){
+        if(buttonIndex == 0){
+            
+        }else if(buttonIndex == 1){
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:nil userInfo:@{@"order_id" : self.orderId}];
+            [self.navigationController popToRootViewControllerAnimated:YES];
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"Your order is cancelled" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [alert show];
+        }
+    }
 }
 
 -(void)cancelBtnHandle {
@@ -66,6 +86,33 @@
     return  YES;
 }
 
+- (void)startLoadingData{
+    if (!simiLoading.isAnimating) {
+        CGRect frame = self.view.frame;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && self.navigationController) {
+            if (frame.size.width > self.navigationController.view.frame.size.width) {
+                frame = self.navigationController.view.frame;
+            }
+        }
+        
+        simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        simiLoading.hidesWhenStopped = YES;
+        simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
+        [self.view addSubview:simiLoading];
+        self.view.userInteractionEnabled = NO;
+        [simiLoading startAnimating];
+        self.view.alpha = 0.5;
+        
+    }
+}
+
+- (void)stopLoadingData{
+    self.view.userInteractionEnabled = YES;
+    self.view.alpha = 1;
+    [simiLoading stopAnimating];
+    [simiLoading removeFromSuperview];
+}
+
 -(void)webViewDidStartLoad:(UIWebView *)webView {
     [self startLoadingData];
 }
@@ -73,26 +120,7 @@
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
     [self stopLoadingData];
 }
-/*
--(void)startLoading {
-    if (!self.loadingView.isAnimating) {
-        CGRect frame = self.view.frame;
-        self.loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyleWhiteLarge)];
-        [self.loadingView hidesWhenStopped];
-        self.loadingView.center = CGPointMake(frame.size.width/2, frame.size.height/2);
-        [self.view addSubview:self.loadingView];
-        [self.loadingView startAnimating];
-        self.view.alpha = 0.5;
-    }
-}
 
--(void)stopLoading {
-    self.view.userInteractionEnabled = YES;
-    self.view.alpha = 1;
-    [self.loadingView stopAnimating];
-    [self.loadingView removeFromSuperview];
-}
-*/
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
