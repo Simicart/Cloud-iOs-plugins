@@ -7,6 +7,9 @@
 //
 
 #import "SimiPayUViewController.h"
+#import "SimiPayUModel.h"
+#import "SimiGlobalVar+PayU.h"
+#import <SimiCartBundle/SCThankyouPageViewController.h>
 
 @interface SimiPayUViewController ()
 
@@ -15,17 +18,70 @@
 @implementation SimiPayUViewController {
     UIBarButtonItem *backItem;
     UIActivityIndicatorView* simiLoading;
+    SimiPayUModel *model;
+    NSString *resultUrl;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.view setBackgroundColor:[UIColor whiteColor]];
+    [self.view addSubview:_webView];
+    [self startLoadingData];
+    NSLog(@"order detail : %@", self.order);
+    NSDictionary *param = @{
+                                @"order_id" : [self.order valueForKey:@"_id"],
+                                @"continue_url" : @"http://localhost"
+                            };
+    if (model == nil) {
+        model = [[SimiPayUModel alloc] init];
+    }
+    [model getDirectLink:param];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUDirectLinkConfig" object:nil];
     self.navigationItem.hidesBackButton = YES;
     UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
     backButton.title = @"Cancel";
     NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
     [leftBarButtons addObjectsFromArray:@[backButton]];
     self.navigationItem.leftBarButtonItems = leftBarButtons;
+    self.navigationItem.title = @"PAYU";
 }
+
+- (void)didReceiveNotification:(NSNotification *)noti{
+    
+    SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
+    if([noti.name isEqualToString:DidCancelOrder]){
+        if([responder.status isEqualToString:@"SUCCESS"]){
+                [self stopLoadingData];
+                SCThankYouPageViewController* thankyouPage = [SCThankYouPageViewController new];
+                thankyouPage.order = self.order;
+                [thankyouPage.navigationItem setHidesBackButton:YES];
+                [self.navigationController pushViewController:thankyouPage animated:YES];
+            }
+    } else if ([noti.name isEqualToString:@"DidGetPayUDirectLinkConfig"]) {
+        SimiResponder *responder = [noti.userInfo valueForKey:@"responder"];
+        if (![responder.status isEqualToString: @"SUCCESS"]) {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alertView show];
+        } else {
+            if ([model valueForKey:@"errors"] != nil) {
+                NSDictionary *errors = [model valueForKey:@"errors"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please choose another payment.", [errors valueForKey:@"message"]] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [alertView show];
+            } else {
+                resultUrl = [model valueForKey:@"url"];
+                NSURL *url = [[NSURL alloc]initWithString:[resultUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url];
+                [_webView loadRequest:request];
+                
+            }
+            
+        }
+    }
+}
+
+/*
+ 
+*/
 
 -(void) cancelPayment:(id) sender{
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
@@ -38,10 +94,9 @@
         if(buttonIndex == 0){
             
         }else if(buttonIndex == 1){
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:nil userInfo:@{@"order_id" : self.orderId}];
-            [self.navigationController popToRootViewControllerAnimated:YES];
-            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"Your order is cancelled" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-            [alert show];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
+            [self startLoadingData];
+            [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
         }
     }
 }
@@ -54,13 +109,8 @@
 {
     self.edgesForExtendedLayout = UIRectEdgeBottom;
     _webView = [[UIWebView alloc] initWithFrame:CGRectInset(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height), 0, 0)];
-//    _webView = [[UIWebView alloc]initWithFrame:CGRectInset(self.view.bounds, 0, 64)];
     _webView.delegate = self;
-    NSURL *url = [[NSURL alloc]initWithString:[self.stringURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url];
-    [_webView loadRequest:request];
-    [self.view addSubview:_webView];
-    [self startLoadingData];
+    
     
 }
 
@@ -69,7 +119,6 @@
 {
     NSString *stringRequest = [NSString stringWithFormat:@"%@",request];
     if ([stringRequest containsString:@"sessionId"]) {
-//        [self stopLoading];
     }
     if ([stringRequest containsString:@"return"]) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"SUCCESS") message:SCLocalizedString(@"Thank your for purchase") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
@@ -96,7 +145,6 @@
         }
         
         simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        simiLoading.hidesWhenStopped = YES;
         simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
         [self.view addSubview:simiLoading];
         self.view.userInteractionEnabled = NO;
@@ -112,6 +160,8 @@
     [simiLoading stopAnimating];
     [simiLoading removeFromSuperview];
 }
+
+
 
 -(void)webViewDidStartLoad:(UIWebView *)webView {
     [self startLoadingData];

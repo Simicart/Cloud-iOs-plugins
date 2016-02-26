@@ -7,9 +7,10 @@
 //
 
 #import <SimiCartBundle/SimiCartBundle.h>
+#import "SimiPayUViewController.h"
+#import <SimiCartBundle/SimiOrderModel.h>
 
 @interface SimiPayUViewController : UIViewController<UIWebViewDelegate>
-@property (nonatomic, strong) NSString *orderId;
 @property (nonatomic, strong) UIWebView *webView;
-@property (nonatomic, strong) NSString *stringURL;
+@property (nonatomic, strong) SimiOrderModel* order;
 @end
