@@ -18,22 +18,39 @@
 
 @implementation BTPaymentViewController{
     SimiBraintreeModel* braintreeModel;
+    UIBarButtonItem *backItem;
+    UIActivityIndicatorView* simiLoading;
 }
 @synthesize braintreeClient;
 
--(void) viewDidLoadBefore{
+
+
+-(void) viewDidLoad{
     self.braintreeClient = [[BTAPIClient alloc] initWithAuthorization:self.clientToken];
     if([self.listBraintreePayments containsObject:@"android_pay"])
         [self.listBraintreePayments removeObject:@"android_pay"];
     if([self.listBraintreePayments containsObject:@"credit_card"])
-       [self.listBraintreePayments removeObject:@"credit_card"];
+        [self.listBraintreePayments removeObject:@"credit_card"];
     UITableView* tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     tableView.delegate = self;
     tableView.dataSource = self;
-//    tableView.separatorColor = [UIColor clearColor];
+    //    tableView.separatorColor = [UIColor clearColor];
     self.view = tableView;
     self.title = SCLocalizedString(@"Braintree");
-    [super viewDidLoadBefore];
+    
+    self.navigationItem.hidesBackButton = YES;
+    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
+    backButton.title = @"Cancel";
+    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
+    [leftBarButtons addObjectsFromArray:@[backButton]];
+    self.navigationItem.leftBarButtonItems = leftBarButtons;
+    
+}
+
+-(void) cancelPayment:(id) sender{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    [alertView show];
+    alertView.tag = 0;
 }
 
 
@@ -168,14 +185,18 @@
 }
 
 -(void) didReceiveNotification:(NSNotification *)noti{
+    [self stopLoadingData];
     SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
     if([responder.status isEqualToString:@"SUCCESS"]){
-        if([noti.name isEqualToString:BRAINTREESENDNONCETOSERVER]){
+        if([noti.name isEqualToString:BRAINTREESENDNONCETOSERVER] || [noti.name isEqualToString:DidCancelOrder]){
             SCThankYouPageViewController* thankyouPage = [SCThankYouPageViewController new];
             thankyouPage.order = self.order;
             [thankyouPage.navigationItem setHidesBackButton:YES];
             [self.navigationController pushViewController:thankyouPage animated:YES];
         }
+    }else{
+        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:responder.message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alertView show];
     }
     [self removeObserverForNotification:noti];
 }
@@ -242,5 +263,48 @@ requestsDismissalOfViewController:(UIViewController *)viewController {
 - (void)dropInViewControllerDidCancel:(BTDropInViewController *)viewController{
     NSLog(@"DIDCANCEL");
 }
+
+
+- (void)startLoadingData{
+    if (!simiLoading.isAnimating) {
+        CGRect frame = self.view.frame;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && self.navigationController) {
+            if (frame.size.width > self.navigationController.view.frame.size.width) {
+                frame = self.navigationController.view.frame;
+            }
+        }
+        
+        simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        simiLoading.hidesWhenStopped = YES;
+        simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
+        [self.view addSubview:simiLoading];
+        self.view.userInteractionEnabled = NO;
+        [simiLoading startAnimating];
+        self.view.alpha = 0.5;
+        
+    }
+}
+
+- (void)stopLoadingData{
+    self.view.userInteractionEnabled = YES;
+    self.view.alpha = 1;
+    [simiLoading stopAnimating];
+    [simiLoading removeFromSuperview];
+}
+
+//UIAlertViewDelegate
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == 0){
+        if(buttonIndex == 0){
+            
+        }else if(buttonIndex == 1){
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
+            [self startLoadingData];
+            [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
+        }
+    }
+}
+
+
 
 @end
