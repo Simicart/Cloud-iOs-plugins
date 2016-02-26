@@ -37,13 +37,14 @@ typedef enum : NSUInteger {
 } ePAYMENT_OPTIONS;
 
 
-@interface PayUPaymentOptionsViewController () <UITableViewDataSource,UITableViewDelegate>
+@interface PayUPaymentOptionsViewController () <UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate>
 
 
 @property (nonatomic,strong) NSURLConnection *connection;
 @property (nonatomic,strong) NSMutableData *connectionSpecificDataObject;
 @property (nonatomic,strong) NSMutableData *receivedData;
 @property (nonatomic,strong) NSMutableDictionary *allPaymentOption;
+
 
 @property (nonatomic,strong) IBOutlet UITableView *preferredPaymentTable;
 @property (unsafe_unretained, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -66,7 +67,15 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navigationController.navigationItem.title = _appTitle;
+//    self.navigationController.navigationItem.title = _appTitle;
+//    self.navigationController.title = @"PayUBiz";
+//    self.navigationItem.hidesBackButton = YES;
+//    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
+//    backButton.title = @"Cancel";
+//    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
+//    [leftBarButtons addObjectsFromArray:@[backButton]];
+//    self.navigationItem.leftBarButtonItems = leftBarButtons;
+    
     _connectionSpecificDataObject = [[NSMutableData alloc] init];
     
     //setting up preferred Payment option tableView
@@ -109,7 +118,25 @@ typedef enum : NSUInteger {
 
 }
 
+-(void) cancelPayment:(id) sender{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    [alertView show];
+    alertView.tag = 0;
+}
 
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == 0){
+        if(buttonIndex == 0){
+            
+        }else if(buttonIndex == 1){
+//            NSNotificationCenter.defaultCenter().postNotificationName("CancelOrder", object: nil, userInfo: ["order_id" : self.orderData.objectForKey("_id") as! String])
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:nil userInfo:@{@"order_id" : self.orderId}];
+            [self.navigationController popToRootViewControllerAnimated:YES];
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"Your order is cancelled" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [alert show];
+        }
+    }
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -547,6 +574,7 @@ typedef enum : NSUInteger {
     [postData appendString:[NSString stringWithFormat:@"hash=%@",hashStr]];
     
     NSLog(@"POST Data = %@",postData);
+    // fix to test
 //    postData=@"key=gtKFFx&var1=ra:ra&command=payment_related_details_for_mobile_sdk&hash=be01fec047f23ed6bc6b2dce1eabbe180a9848876be64a51f81145de8e6c6679ebb59bea45dfe9691fe624e1f842d42d1d474abc970aa6a03fe17aa900508064";
 
     

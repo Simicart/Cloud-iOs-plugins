@@ -16,12 +16,15 @@
     SimiModel *payment;
     SimiPayUModel *model;
     NSString *directLink;
+//    SimiViewController *viewController;
+    SCOrderViewController *orderViewController;
 }
 
 - (id)init
 {
     self = [super init];
     if (self) {
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didReceiveNotification:) name:DidPlaceOrderBefore object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUDirectLinkConfig" object:nil];
@@ -31,6 +34,9 @@
 }
 
 - (void)didReceiveNotification:(NSNotification *)noti{
+    if ([noti.name isEqualToString:DidPlaceOrderBefore]) {
+        orderViewController = [noti.userInfo valueForKey:@"controller"];
+    } else
     if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
         // neu co the thi get continue link tai day luon.
         
@@ -49,11 +55,12 @@
             } else {
                 directLink = [model valueForKey:@"url"];
                 NSLog(@"direct link : %@", directLink);
-                SimiPayUViewController *viewController = [[SimiPayUViewController alloc] init];
-                viewController.stringURL = directLink;
-                viewController.isDiscontinue = YES;
-                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-                [(UINavigationController *)currentVC pushViewController:viewController animated:YES];
+                SimiPayUViewController *simiPayUViewController = [[SimiPayUViewController alloc] init];
+                simiPayUViewController.stringURL = directLink;
+                simiPayUViewController.isDiscontinue = YES;
+                simiPayUViewController.orderId = [order objectForKey:@"_id"];
+                orderViewController.isDiscontinue = YES;
+                [orderViewController.navigationController pushViewController:simiPayUViewController animated:YES];
             }
             
         }
@@ -70,7 +77,6 @@
                             @"order_id" : [order objectForKey:@"_id"],
                             @"continue_url" : @"http://localhost"
                             };
-        self.isDiscontinue = YES;
         if (model == nil) {
             model = [[SimiPayUModel alloc] init];
         }

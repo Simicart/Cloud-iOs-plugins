@@ -9,6 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "PayU_iOS_SDK.h"
 
-@interface SimiPayUIndianWorker : NSObject
+@interface SimiPayUIndianWorker : NSObject<UIAlertViewDelegate>
 @property (nonatomic, strong) NSDictionary *hashDict;
 @end

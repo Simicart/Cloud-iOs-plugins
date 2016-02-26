@@ -13,6 +13,7 @@
 @property (nonatomic, copy) NSString *command;
 @property (nonatomic, copy) NSString *var1;
 @property (weak, nonatomic) IBOutlet UILabel *TxnID;
+@property (nonatomic, strong) NSString *orderId;
 
 @property (nonatomic,strong) NSMutableDictionary *parameterDict;
 
