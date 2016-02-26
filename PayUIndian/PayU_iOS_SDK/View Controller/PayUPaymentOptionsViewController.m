@@ -67,14 +67,14 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    self.navigationController.navigationItem.title = _appTitle;
-//    self.navigationController.title = @"PayUBiz";
-//    self.navigationItem.hidesBackButton = YES;
-//    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
-//    backButton.title = @"Cancel";
-//    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
-//    [leftBarButtons addObjectsFromArray:@[backButton]];
-//    self.navigationItem.leftBarButtonItems = leftBarButtons;
+    self.navigationController.navigationItem.title = _appTitle;
+    self.navigationController.title = @"PayUBiz";
+    self.navigationItem.hidesBackButton = YES;
+    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
+    backButton.title = @"Cancel";
+    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
+    [leftBarButtons addObjectsFromArray:@[backButton]];
+    self.navigationItem.leftBarButtonItems = leftBarButtons;
     
     _connectionSpecificDataObject = [[NSMutableData alloc] init];
     
@@ -129,9 +129,8 @@ typedef enum : NSUInteger {
         if(buttonIndex == 0){
             
         }else if(buttonIndex == 1){
-//            NSNotificationCenter.defaultCenter().postNotificationName("CancelOrder", object: nil, userInfo: ["order_id" : self.orderData.objectForKey("_id") as! String])
             [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:nil userInfo:@{@"order_id" : self.orderId}];
-            [self.navigationController popToRootViewControllerAnimated:YES];
+            //[self.navigationController popToRootViewControllerAnimated:YES];
             UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"Your order is cancelled" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
             [alert show];
         }
