@@ -8,4 +8,5 @@
 @interface KlarnaViewController : UIViewController<UIWebViewDelegate>
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) NSString* url;
+@property (nonatomic, strong) SimiOrderModel* order;
 @end

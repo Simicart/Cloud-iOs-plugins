@@ -33,6 +33,7 @@
         if ([[payment valueForKey:@"method_code"] isEqualToString:@"klarna"]) {
             orderViewController.isDiscontinue = YES;
             KlarnaViewController *viewController = [[KlarnaViewController alloc] init];
+            viewController.order = order;
             [orderViewController.navigationController pushViewController:viewController animated:YES];
             viewController.navigationItem.title = @"Klarna";
             if([[[SimiGlobalVar sharedInstance] currencyCode] isEqualToString:@"USD"] || [[[SimiGlobalVar sharedInstance] currencyCode] isEqualToString:@"GBP"])

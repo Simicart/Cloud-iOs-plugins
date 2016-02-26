@@ -13,7 +13,7 @@
     @property (strong, nonatomic) IBOutlet UIWebView *viewWeb;
     @property (strong, nonatomic) NSString *accessCode;
     @property (strong, nonatomic) NSString *merchantId;
-    @property (strong, nonatomic) NSString *orderId;
+    @property (strong, nonatomic) SimiOrderModel* order;
     @property (strong, nonatomic) NSString *amount;
     @property (strong, nonatomic) NSString *currency;
     @property (strong, nonatomic) NSString *redirectUrl;

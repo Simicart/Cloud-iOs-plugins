@@ -13,7 +13,7 @@
 {
     SimiViewController* currentVC;
     CCAvenueModel* ccAvenueModel;
-    NSDictionary* order;
+    SimiOrderModel* order;
 //    NSString* rsaKey, *accessCode, *merchantID;
 }
 -(instancetype) init{
@@ -46,7 +46,7 @@
             ccWebViewController.merchantId = [ccAvenueModel valueForKey:@"merchant_id"];
             ccWebViewController.amount = [order valueForKey:@"grand_total"];
             ccWebViewController.currency = [[SimiGlobalVar sharedInstance] currencyCode];
-            ccWebViewController.orderId = [order valueForKey:@"seq_id"];
+            ccWebViewController.order = order;
             ccWebViewController.redirectUrl = @"http://122.182.6.216/merchant/ccavResponseHandler.jsp";
             ccWebViewController.cancelUrl = @"http://122.182.6.216/merchant/ccavResponseHandler.jsp";
             [currentVC.navigationController pushViewController:ccWebViewController animated:YES];

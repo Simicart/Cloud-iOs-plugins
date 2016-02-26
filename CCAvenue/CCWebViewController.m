@@ -19,7 +19,7 @@
     UIBarButtonItem *backItem;
     UIActivityIndicatorView* simiLoading;
 }
-@synthesize rsaKey;@synthesize accessCode;@synthesize merchantId;@synthesize orderId;
+@synthesize rsaKey;@synthesize accessCode;@synthesize merchantId;@synthesize order;
 @synthesize amount;@synthesize currency;@synthesize redirectUrl;@synthesize cancelUrl;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -59,7 +59,7 @@
     
     //Preparing for a webview call
     NSString *urlAsString = [NSString stringWithFormat:@"https://secure.ccavenue.com/transaction/initTrans"];
-    NSString *encryptedStr = [NSString stringWithFormat:@"merchant_id=%@&order_id=%@&redirect_url=%@&cancel_url=%@&enc_val=%@&access_code=%@",merchantId,orderId,redirectUrl,cancelUrl,encVal,accessCode];
+    NSString *encryptedStr = [NSString stringWithFormat:@"merchant_id=%@&order_id=%@&redirect_url=%@&cancel_url=%@&enc_val=%@&access_code=%@",merchantId,[order valueForKey:@"_id"],redirectUrl,cancelUrl,encVal,accessCode];
     
     NSData *myRequestData = [NSData dataWithBytes: [encryptedStr UTF8String] length: [encryptedStr length]];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL: [NSURL URLWithString: urlAsString]];
@@ -81,6 +81,7 @@
 
 -(void) cancelPayment:(id) sender{
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    
     [alertView show];
     alertView.tag = 0;
 }
@@ -97,11 +98,11 @@
         [self startLoadingData];
         if (([html rangeOfString:@"Aborted"].location != NSNotFound) ||
             ([html rangeOfString:@"Cancel"].location != NSNotFound)) {
-            [avenueModel updatePaymentWithOrder:orderId status:@"2"];
+            [avenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"2"];
         }else if (([html rangeOfString:@"Success"].location != NSNotFound)) {
-            [avenueModel updatePaymentWithOrder:orderId status:@"1"];
+            [avenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"1"];
         }else if (([html rangeOfString:@"Fail"].location != NSNotFound)) {
-            [avenueModel updatePaymentWithOrder:orderId status:@"0"];
+            [avenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"0"];
         }
     }
 }
@@ -134,8 +135,12 @@
             [userDefaults synchronize];
         }
         SCThankYouPageViewController* thankyouPage = [[SCThankYouPageViewController alloc] init];
-        thankyouPage.order = [[SimiOrderModel alloc] initWithDictionary:avenueModel];
         [self.navigationController pushViewController:thankyouPage animated:YES];
+        if([noti.name isEqualToString:DidUpdateCCAvenuePayment]){
+            thankyouPage.order = [[SimiOrderModel alloc] initWithDictionary:avenueModel];
+        }else{
+            thankyouPage.order = order;
+        }
     }else{
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",[avenueModel objectForKey:@"code" ]] message:[NSString stringWithFormat:@"%@",[avenueModel objectForKey:@"message" ]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [self.navigationController popViewControllerAnimated:NO];
@@ -178,9 +183,9 @@
         }else if(buttonIndex == 1){
             if(!avenueModel)
                 avenueModel = [CCAvenueModel new];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidUpdateCCAvenuePayment object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
             [self startLoadingData];
-            [avenueModel updatePaymentWithOrder:orderId status:@"2"];
+            [order cancelAnOrder:[order valueForKey:@"_id"]];
         }
     }
 }

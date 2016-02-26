@@ -75,7 +75,21 @@
 }
 
 -(void) didReceiveNotification:(NSNotification *)noti{
-    
+    [self stopLoadingData];
+    SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
+    if([responder.status isEqualToString:@"SUCCESS"]){
+        if([noti.name isEqualToString:DidCancelOrder]){
+            SCThankYouPageViewController* thankyouPage = [SCThankYouPageViewController new];
+            thankyouPage.order = self.order;
+            [thankyouPage.navigationItem setHidesBackButton:YES];
+            [self.navigationController pushViewController:thankyouPage animated:YES];
+        }
+    }else{
+        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:responder.message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alertView show];
+    }
+    [self removeObserverForNotification:noti];
+
 }
 
 - (void)startLoadingData{
@@ -111,9 +125,9 @@
         if(buttonIndex == 0){
             
         }else if(buttonIndex == 1){
-            [self.navigationController popToRootViewControllerAnimated:YES];
-            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"Your order is cancelled" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-            [alert show];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
+            [self startLoadingData];
+            [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
         }
     }
 }
