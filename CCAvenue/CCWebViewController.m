@@ -8,6 +8,7 @@
 
 #import "CCWebViewController.h"
 #import "CCTool.h"
+#import <SimiCartBundle/SCAppDelegate.h>
 
 @interface CCWebViewController ()
 
@@ -90,7 +91,7 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     [self stopLoadingData];
     NSString *string = webView.request.URL.absoluteString;
-    if ([string rangeOfString:@"/ccavResponseHandler.jsp"].location != NSNotFound) {
+    if ([string rangeOfString:@"secure.ccavenue.com/transaction"].location != NSNotFound) {
         NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
         if(!avenueModel)
             avenueModel = [CCAvenueModel new];
@@ -135,11 +136,22 @@
             [userDefaults synchronize];
         }
         SCThankYouPageViewController* thankyouPage = [[SCThankYouPageViewController alloc] init];
-        [self.navigationController pushViewController:thankyouPage animated:YES];
         if([noti.name isEqualToString:DidUpdateCCAvenuePayment]){
             thankyouPage.order = [[SimiOrderModel alloc] initWithDictionary:avenueModel];
         }else{
             thankyouPage.order = order;
+        }
+        if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+            [self.navigationController pushViewController:thankyouPage animated:YES];
+        else{
+            UINavigationController* nvThankyou = [[UINavigationController alloc] initWithRootViewController:thankyouPage];
+            UIPopoverController* tkPopover = [[UIPopoverController alloc] initWithContentViewController:nvThankyou];
+            thankyouPage.popOver = tkPopover;
+            [self.navigationController popToRootViewControllerAnimated:YES];
+            UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+            UIViewController *viewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+            [tkPopover presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:viewController.view permittedArrowDirections:0 animated:YES];
+            
         }
     }else{
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",[avenueModel objectForKey:@"code" ]] message:[NSString stringWithFormat:@"%@",[avenueModel objectForKey:@"message" ]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];

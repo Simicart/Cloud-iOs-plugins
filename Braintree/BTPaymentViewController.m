@@ -12,6 +12,8 @@
 #import "BraintreePayPal.h"
 #import "SimiBraintreeModel.h"
 #import <SimiCartBundle/SCThankyouPageViewController.h>
+#import <SimiCartBundle/SCAppDelegate.h>
+
 
 @interface BTPaymentViewController ()
 @end
@@ -34,6 +36,10 @@
     UITableView* tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     tableView.delegate = self;
     tableView.dataSource = self;
+    if (SIMI_SYSTEM_IOS >= 9) {
+        tableView.cellLayoutMarginsFollowReadableWidth = NO;
+    }
+    
     //    tableView.separatorColor = [UIColor clearColor];
     self.view = tableView;
     self.title = SCLocalizedString(@"Braintree");
@@ -192,11 +198,22 @@
             SCThankYouPageViewController* thankyouPage = [SCThankYouPageViewController new];
             thankyouPage.order = self.order;
             [thankyouPage.navigationItem setHidesBackButton:YES];
-            [self.navigationController pushViewController:thankyouPage animated:YES];
+            if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+                [self.navigationController pushViewController:thankyouPage animated:YES];
+            else{
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+                UIViewController *viewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+                UINavigationController* nvThankyou = [[UINavigationController alloc] initWithRootViewController:thankyouPage];
+                UIPopoverController* tkPoppver = [[UIPopoverController alloc] initWithContentViewController:nvThankyou];
+                thankyouPage.popOver = tkPoppver;
+                
+                [tkPoppver presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:viewController.view permittedArrowDirections:0 animated:YES];
+            }
         }
     }else{
-        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:responder.message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alertView show];
+//        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:responder.message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+//        [alertView show];
     }
     [self removeObserverForNotification:noti];
 }
@@ -281,7 +298,6 @@ requestsDismissalOfViewController:(UIViewController *)viewController {
         self.view.userInteractionEnabled = NO;
         [simiLoading startAnimating];
         self.view.alpha = 0.5;
-        
     }
 }
 

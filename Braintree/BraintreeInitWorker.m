@@ -56,6 +56,8 @@
             btPaymentVC.clientToken = clientToken;
             btPaymentVC.appleMerchant = appleMerchant;
             btPaymentVC.order = (SimiOrderModel* ) noti.object;
+//            UIPopoverController* btPopup = [[UIPopoverController alloc] initWithContentViewController:btPaymentVC];
+//            [btPopup presentPopoverFromRect:CGRectMake(SCREEN_WIDTH*2/3, SCREEN_WIDTH*2/3, 1, 1) inView:currentVC.view permittedArrowDirections:UIPopoverArrowDirectionUnknown animated:YES];
             [currentVC.navigationController pushViewController:btPaymentVC animated:YES];
         }
     }else if([noti.name isEqualToString:BRAINTREEGETSETTING]){

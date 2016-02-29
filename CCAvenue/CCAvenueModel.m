@@ -28,8 +28,8 @@ const NSString *kSimiCCAvenueUpdatePayment = @"ccavenue/update-ccavenue-payment"
 -(void) didFinishRequest:(NSObject *)responseObject responder:(SimiResponder *)responder{
         if([responseObject isKindOfClass:[SimiMutableDictionary class]]){
             NSMutableDictionary *responseObjectData = [[SimiMutableDictionary alloc]initWithDictionary:(NSMutableDictionary*)responseObject];
-            if([currentNotificationName isEqualToString:DidGetRSACCAvenue]){                        [self setData:responseObjectData];
-                
+            if([currentNotificationName isEqualToString:DidGetRSACCAvenue]){
+                [self setData:responseObjectData];
             }else if([currentNotificationName isEqualToString:DidUpdateCCAvenuePayment]){
                 if([responseObjectData objectForKey:@"invoice"]){
                     [self setData:[responseObjectData objectForKey:@"invoice"]];

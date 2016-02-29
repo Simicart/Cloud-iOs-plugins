@@ -7,7 +7,7 @@
 //
 
 #import "CCAvenue.h"
-
+#import <SimiCartBundle/SCAppDelegate.h>
 
 @implementation CCAvenue
 {
@@ -40,16 +40,25 @@
             
         }else if([noti.name isEqualToString:DidGetRSACCAvenue]){
             [self removeObserverForNotification:noti];
-            CCWebViewController* ccWebViewController = [CCWebViewController new];
-            ccWebViewController.rsaKey = [ccAvenueModel valueForKey:@"rsa_key"];;
-            ccWebViewController.accessCode = [ccAvenueModel valueForKey:@"access_code"];
-            ccWebViewController.merchantId = [ccAvenueModel valueForKey:@"merchant_id"];
-            ccWebViewController.amount = [order valueForKey:@"grand_total"];
-            ccWebViewController.currency = [[SimiGlobalVar sharedInstance] currencyCode];
-            ccWebViewController.order = order;
-            ccWebViewController.redirectUrl = @"http://122.182.6.216/merchant/ccavResponseHandler.jsp";
-            ccWebViewController.cancelUrl = @"http://122.182.6.216/merchant/ccavResponseHandler.jsp";
-            [currentVC.navigationController pushViewController:ccWebViewController animated:YES];
+            if(![ccAvenueModel objectForKey:@"errors"]){
+                CCWebViewController* ccWebViewController = [CCWebViewController new];
+                ccWebViewController.rsaKey = [ccAvenueModel valueForKey:@"rsa_key"];
+                ccWebViewController.accessCode = [ccAvenueModel valueForKey:@"access_code"];
+                ccWebViewController.merchantId = [ccAvenueModel valueForKey:@"merchant_id"];
+                ccWebViewController.amount = [order valueForKey:@"grand_total"];
+                ccWebViewController.currency = [[SimiGlobalVar sharedInstance] currencyCode];
+                ccWebViewController.order = order;
+                ccWebViewController.redirectUrl = [ccAvenueModel valueForKey:@"url"];
+                ccWebViewController.cancelUrl = [ccAvenueModel valueForKey:@"url"];
+                [currentVC.navigationController pushViewController:ccWebViewController animated:YES];
+            }else{
+                NSDictionary* errors = [ccAvenueModel objectForKey:@"errors"];
+                UIAlertView* alert = [[UIAlertView alloc] initWithTitle:[errors valueForKey:@"code"] message:[errors valueForKey:@"message"] delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles:nil, nil];
+                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+                UIViewController *viewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+                [viewController.navigationController popToRootViewControllerAnimated:YES];
+                [alert show];
+            }
         }
     }else{
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:responder.status message:responder.message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];

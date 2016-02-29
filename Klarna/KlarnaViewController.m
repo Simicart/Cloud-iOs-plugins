@@ -1,6 +1,7 @@
 //Axe created 2016
 
 #import "KlarnaViewController.h"
+#import <SimiCartBundle/SCAppDelegate.h>
 
 @interface KlarnaViewController ()
 @end
@@ -23,7 +24,7 @@
     _webView = [[UIWebView alloc]initWithFrame:self.view.bounds];
     _webView.delegate = self;
     [self.view addSubview:_webView];
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:_url]];
+    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:[_url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
     [_webView loadRequest:request];
     
     self.navigationItem.hidesBackButton = YES;
@@ -82,14 +83,23 @@
             SCThankYouPageViewController* thankyouPage = [SCThankYouPageViewController new];
             thankyouPage.order = self.order;
             [thankyouPage.navigationItem setHidesBackButton:YES];
-            [self.navigationController pushViewController:thankyouPage animated:YES];
+            if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+                [self.navigationController pushViewController:thankyouPage animated:YES];
+            else{
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+                UIViewController *viewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+                UINavigationController* nvThankyou = [[UINavigationController alloc] initWithRootViewController:thankyouPage];
+                UIPopoverController* tkPopover = [[UIPopoverController alloc] initWithContentViewController:nvThankyou];
+                thankyouPage.popOver = tkPopover;
+                [tkPopover  presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:viewController.view permittedArrowDirections:0 animated:YES];
+            }
         }
     }else{
         UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:responder.message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [alertView show];
     }
     [self removeObserverForNotification:noti];
-
 }
 
 - (void)startLoadingData{
