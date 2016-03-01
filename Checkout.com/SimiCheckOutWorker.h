@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface SimiCheckOutWorker : NSObject
-
+@interface SimiCheckOutWorker : NSObject<UIPopoverControllerDelegate>
+@property (strong, nonatomic) UIPopoverController * popController;
 @end

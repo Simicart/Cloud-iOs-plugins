@@ -23,8 +23,9 @@ extension UIColor {
     }
 }
 
-class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIAlertViewDelegate {
+class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIAlertViewDelegate, UIPopoverControllerDelegate {
     // checkout
+//    @property (nonatomic, strong) SimiOrderModel* order;
     var simiCheckOutModel : SimiCheckOutModel!
     var pickerContent: [[String]] = []
     let months = [1,2,3,4,5,6,7,8,9,10,11,12]
@@ -94,26 +95,23 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.datePicker.hidden = true
         self.doneButton.hidden = true
         self.cardTokenButton.hidden = false
-        self.nameField.text = "VU THANH DO"
-        self.numberField.text = "4221498672015477"
-        self.dateField.text = "10 / 2019"
-        self.cvvField.text = "285"
-        self.month = "10"
-        self.year = "2019"
+        self.nameField.text = "TEST NAME"
+        self.numberField.text = "4543474002249996"
+        self.dateField.text = "06 / 2017"
+        self.cvvField.text = "956"
+        self.month = "06"
+        self.year = "2017"
     }
     
     func cancelBtnHandle(sender : AnyObject) {
         let alertView : UIAlertView = UIAlertView(title: "Are you sure want to cancel?", message: "", delegate: self, cancelButtonTitle: "Yes", otherButtonTitles: "No")
         alertView.show()
-//        self.navigationController?.popToRootViewControllerAnimated(true)
     }
     
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
         if buttonIndex == alertView.cancelButtonIndex {
-            // call to api cancel order.
-            print("order data : \(self.orderData)");
-            NSNotificationCenter.defaultCenter().postNotificationName("CancelOrder", object: nil, userInfo: ["order_id" : self.orderData.objectForKey("_id") as! String])
-            self.navigationController?.popToRootViewControllerAnimated(true)
+            self.startLoading()
+            NSNotificationCenter.defaultCenter().postNotificationName("CancelOrder", object: orderData)
         }
     }
     
@@ -282,36 +280,6 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         cardTokenButton.hidden = true
     }
     
-    /*
-    - (void)startLoadingData{
-    if (!simiLoading.isAnimating) {
-    CGRect frame = self.view.frame;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && self.navigationController) {
-    if (frame.size.width > self.navigationController.view.frame.size.width) {
-    frame = self.navigationController.view.frame;
-    }
-    }
-    
-    simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    simiLoading.hidesWhenStopped = YES;
-    simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
-    [self.view addSubview:simiLoading];
-    self.view.userInteractionEnabled = NO;
-    [simiLoading startAnimating];
-    if (_didAppear) {
-    self.view.alpha = 0.5;
-    }
-    }
-    }
-    
-    - (void)stopLoadingData{
-    self.view.userInteractionEnabled = YES;
-    self.view.alpha = 1;
-    [simiLoading stopAnimating];
-    [simiLoading removeFromSuperview];
-    }
-    */
-    
     func startLoading() {
         if loadingView.isAnimating() == false {
             let frame : CGRect = self.view.frame
@@ -399,20 +367,10 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
             }
         }
     }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using segue.destinationViewController.
-    // Pass the selected object to the new view controller.
-    }
-    */
 }
