@@ -33,6 +33,7 @@
     NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
     [leftBarButtons addObjectsFromArray:@[backButton]];
     self.navigationItem.leftBarButtonItems = leftBarButtons;
+    [self startLoadingData];
 }
 
 -(void) cancelPayment:(id) sender{
@@ -44,7 +45,7 @@
 #pragma Webview Delegate
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
-    [self startLoadingData];
+//    [self startLoadingData];
     NSLog(@"%@", [NSString stringWithFormat:@"%@",request]);
     NSString* requestURL = [NSString stringWithFormat:@"%@",[request mainDocumentURL]];
     if([requestURL rangeOfString:@"klarna/confirmation?klarna_order_id"].location != NSNotFound){

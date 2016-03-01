@@ -70,6 +70,7 @@
     [request setHTTPBody: myRequestData];
     
     [_viewWeb loadRequest:request];
+    [self startLoadingData];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidUpdateCCAvenuePayment object:nil];
     
     self.navigationItem.hidesBackButton = YES;
@@ -91,7 +92,7 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     [self stopLoadingData];
     NSString *string = webView.request.URL.absoluteString;
-    if ([string rangeOfString:@"secure.ccavenue.com/transaction"].location != NSNotFound) {
+    if ([string rangeOfString:redirectUrl].location != NSNotFound) {
         NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
         if(!avenueModel)
             avenueModel = [CCAvenueModel new];
@@ -102,7 +103,7 @@
             [avenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"2"];
         }else if (([html rangeOfString:@"Success"].location != NSNotFound)) {
             [avenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"1"];
-        }else if (([html rangeOfString:@"Fail"].location != NSNotFound)) {
+        }else if ([html rangeOfString:@"Fail"].location != NSNotFound || [html rangeOfString:@"Error"].location != NSNotFound) {
             [avenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"0"];
         }
     }
@@ -127,6 +128,7 @@
 -(void) didReceiveNotification:(NSNotification *)noti{
     SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
     [self removeObserverForNotification:noti];
+    [self stopLoadingData];
     if([[responder.status uppercaseString] isEqualToString:@"SUCCESS"]){
         //delete quote
         [[SimiGlobalVar sharedInstance] setQuoteId:nil];
