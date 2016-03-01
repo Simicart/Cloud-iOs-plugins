@@ -175,7 +175,7 @@
                 }
             }
         }else if([[order valueForKey:@"status"] isEqualToString:@"cancelled"]){
-            alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"") message:@"Your payment is cancelled." delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
+            alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"") message:SCLocalizedString(@"Your payment is cancelled.") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
             [alertView show];
         }
         else{
