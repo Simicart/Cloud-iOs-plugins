@@ -50,48 +50,41 @@
     } else if ([noti.name isEqualToString:@"CancelOrder"]) {
         // get order id and call api cancel order
         order = noti.object;
-        payment = [order objectForKey:@"payment"];
-        if ([[payment valueForKey:@"method_code"] isEqualToString:@"checkout"]) {
-            [order cancelAnOrder:[order objectForKey:@"_id"]];
-        }
-        
+        [order cancelAnOrder:[order objectForKey:@"_id"]];
     } else if ([noti.name isEqualToString:DidCancelOrder]) {
         order = noti.object;
-        payment = [order objectForKey:@"payment"];
-        if ([[payment valueForKey:@"method_code"] isEqualToString:@"checkout"]) {
-            SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
-            UINavigationController *navi;
-            navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
-            thankYouPageViewController.order = order;
-            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-                _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
-                [_popController dismissPopoverAnimated:YES];
-                thankYouPageViewController.popOver = _popController;
-                _popController.delegate = self;
-                navi.navigationBar.tintColor = THEME_COLOR;
-                if (SIMI_SYSTEM_IOS >= 8) {
-                    navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
-                }
-                navi.navigationBar.barTintColor = THEME_COLOR;
-                [viewController.navigationController popToRootViewControllerAnimated:YES];
-                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-                UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
-                [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
-            } else {
-                [viewController.navigationController pushViewController:navi animated:YES];
+        SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
+        UINavigationController *navi;
+        navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
+        thankYouPageViewController.order = order;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
+            [_popController dismissPopoverAnimated:YES];
+            thankYouPageViewController.popOver = _popController;
+            _popController.delegate = self;
+            navi.navigationBar.tintColor = THEME_COLOR;
+            if (SIMI_SYSTEM_IOS >= 8) {
+                navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
             }
+            navi.navigationBar.barTintColor = THEME_COLOR;
+            [viewController.navigationController popToRootViewControllerAnimated:YES];
+            UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+            UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+            [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
         } else {
-            payment = [noti.userInfo valueForKey:@"payment"];
-            NSLog(@"payment_method : %@", payment);
-            if ([[payment valueForKey:@"method_code"] isEqualToString:@"checkout"]) {
-                if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
-                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetCheckOutPublishKeyConfig" object:nil];
-                    SimiCheckOutModel *simiCheckOutModel = [[SimiCheckOutModel alloc] init];
-                    [simiCheckOutModel getPublishKey:nil];
-                    model = simiCheckOutModel;
-                }else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]){
-                    [self didPlaceOrder:noti];
-                }
+            [viewController.navigationController pushViewController:navi animated:YES];
+        }
+    } else {
+        payment = [noti.userInfo valueForKey:@"payment"];
+        NSLog(@"payment_method : %@", payment);
+        if ([[payment valueForKey:@"method_code"] isEqualToString:@"checkout"]) {
+            if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetCheckOutPublishKeyConfig" object:nil];
+                SimiCheckOutModel *simiCheckOutModel = [[SimiCheckOutModel alloc] init];
+                [simiCheckOutModel getPublishKey:nil];
+                model = simiCheckOutModel;
+            }else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]){
+                [self didPlaceOrder:noti];
             }
         }
     }
