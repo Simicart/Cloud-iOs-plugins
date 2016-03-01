@@ -46,7 +46,7 @@
     
     self.navigationItem.hidesBackButton = YES;
     UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
-    backButton.title = @"Cancel";
+    backButton.title = SCLocalizedString(@"Cancel");
     NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
     [leftBarButtons addObjectsFromArray:@[backButton]];
     self.navigationItem.leftBarButtonItems = leftBarButtons;
@@ -54,7 +54,7 @@
 }
 
 -(void) cancelPayment:(id) sender{
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Confirmation") message:SCLocalizedString(@"Are you sure that you want to cancel the order?") delegate:self cancelButtonTitle:SCLocalizedString(@"Cancel") otherButtonTitles:SCLocalizedString(@"OK"), nil];
     [alertView show];
     alertView.tag = 0;
 }

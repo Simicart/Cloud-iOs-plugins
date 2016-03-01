@@ -37,7 +37,7 @@
         if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
             payPalAppKey = [payment valueForKey:@"client_id"];
             payPalReceiverEmail = [payment valueForKey:@"paypal_email"];
-            BOOL isSandbox = [[payment valueForKey:@"sandbox"] boolValue];
+            BOOL isSandbox = [[payment valueForKey:@"sand_box"] boolValue];
             @try {
                 if (isSandbox) {
                     [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentSandbox : payPalAppKey}];
@@ -75,7 +75,7 @@
     payPalReceiverEmail = [payment valueForKey:@"paypal_email"];
     bnCode = [payment valueForKey:@"bncode"];
     
-    BOOL isSandbox = [[payment valueForKey:@"sandbox"] boolValue];
+    BOOL isSandbox = [[payment valueForKey:@"sand_box"] boolValue];
     @try {
         if (isSandbox) {
             [PayPalMobile preconnectWithEnvironment:PayPalEnvironmentSandbox];
@@ -175,7 +175,7 @@
                 }
             }
         }else if([[order valueForKey:@"status"] isEqualToString:@"cancelled"]){
-            alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"") message:@"Your payment is cancelled." delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
+            alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"") message:SCLocalizedString(@"Your payment is cancelled.") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
             [alertView show];
         }
         else{
