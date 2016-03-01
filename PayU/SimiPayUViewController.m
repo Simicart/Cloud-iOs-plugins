@@ -10,6 +10,7 @@
 #import "SimiPayUModel.h"
 #import "SimiGlobalVar+PayU.h"
 #import <SimiCartBundle/SCThankyouPageViewController.h>
+#import <SimiCartBundle/SCAppDelegate.h>
 
 @interface SimiPayUViewController ()
 
@@ -20,12 +21,12 @@
     UIActivityIndicatorView* simiLoading;
     SimiPayUModel *model;
     NSString *resultUrl;
+    SimiViewController *viewController;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    [self.view addSubview:_webView];
     [self startLoadingData];
     NSLog(@"order detail : %@", self.order);
     NSDictionary *param = @{
@@ -47,17 +48,8 @@
 }
 
 - (void)didReceiveNotification:(NSNotification *)noti{
-    
     SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
-    if([noti.name isEqualToString:DidCancelOrder]){
-        if([responder.status isEqualToString:@"SUCCESS"]){
-                [self stopLoadingData];
-                SCThankYouPageViewController* thankyouPage = [SCThankYouPageViewController new];
-                thankyouPage.order = self.order;
-                [thankyouPage.navigationItem setHidesBackButton:YES];
-                [self.navigationController pushViewController:thankyouPage animated:YES];
-            }
-    } else if ([noti.name isEqualToString:@"DidGetPayUDirectLinkConfig"]) {
+    if ([noti.name isEqualToString:@"DidGetPayUDirectLinkConfig"]) {
         SimiResponder *responder = [noti.userInfo valueForKey:@"responder"];
         if (![responder.status isEqualToString: @"SUCCESS"]) {
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -67,21 +59,19 @@
                 NSDictionary *errors = [model valueForKey:@"errors"];
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please choose another payment.", [errors valueForKey:@"message"]] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
                 [alertView show];
+//                [self stopLoadingData];
+//                [viewController.navigationController popToRootViewControllerAnimated:YES];
             } else {
+                [self startLoadingData];
                 resultUrl = [model valueForKey:@"url"];
                 NSURL *url = [[NSURL alloc]initWithString:[resultUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
                 NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url];
+                [self.view addSubview:_webView];
                 [_webView loadRequest:request];
-                
             }
-            
         }
     }
 }
-
-/*
- 
-*/
 
 -(void) cancelPayment:(id) sender{
     UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
@@ -93,16 +83,11 @@
     if(alertView.tag == 0){
         if(buttonIndex == 0){
             
-        }else if(buttonIndex == 1){
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
+        } else if(buttonIndex == 1) {
             [self startLoadingData];
-            [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:self.order];
         }
     }
-}
-
--(void)cancelBtnHandle {
-    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -110,8 +95,6 @@
     self.edgesForExtendedLayout = UIRectEdgeBottom;
     _webView = [[UIWebView alloc] initWithFrame:CGRectInset(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height), 0, 0)];
     _webView.delegate = self;
-    
-    
 }
 
 #pragma mark UIWebView Delegate
@@ -136,21 +119,26 @@
 }
 
 - (void)startLoadingData{
-    if (!simiLoading.isAnimating) {
-        CGRect frame = self.view.frame;
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && self.navigationController) {
-            if (frame.size.width > self.navigationController.view.frame.size.width) {
-                frame = self.navigationController.view.frame;
+    if (simiLoading == nil) {
+        if (!simiLoading.isAnimating) {
+            CGRect frame = self.view.frame;
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && self.navigationController) {
+                if (frame.size.width > self.navigationController.view.frame.size.width) {
+                    frame = self.navigationController.view.frame;
+                }
             }
+            simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+            simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
+            [self.view addSubview:simiLoading];
+            self.view.userInteractionEnabled = NO;
+            [simiLoading startAnimating];
+            self.view.alpha = 0.5;
         }
-        
-        simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
+    } else {
         [self.view addSubview:simiLoading];
         self.view.userInteractionEnabled = NO;
         [simiLoading startAnimating];
         self.view.alpha = 0.5;
-        
     }
 }
 
@@ -160,8 +148,6 @@
     [simiLoading stopAnimating];
     [simiLoading removeFromSuperview];
 }
-
-
 
 -(void)webViewDidStartLoad:(UIWebView *)webView {
     [self startLoadingData];

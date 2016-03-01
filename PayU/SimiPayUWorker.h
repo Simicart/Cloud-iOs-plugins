@@ -9,6 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "SimiPayUViewController.h"
 
-@interface SimiPayUWorker : NSObject
-
+@interface SimiPayUWorker : NSObject<UIPopoverControllerDelegate>
+@property (strong, nonatomic) UIPopoverController * popController;
 @end
