@@ -56,7 +56,7 @@
             [alertView show];
         } else {
             if ([model valueForKey:@"errors"] != nil) {
-                NSDictionary *errors = [model valueForKey:@"errors"];
+//                NSDictionary *errors = [model valueForKey:@"errors"];
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:@"Sorry, currentcy is not supported. Please choose another payment." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
                 alertView.tag = 1;
                 [alertView show];
@@ -106,10 +106,33 @@
     if ([stringRequest containsString:@"sessionId"]) {
     }
     if ([stringRequest containsString:@"return"]) {
+        /*
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"SUCCESS") message:SCLocalizedString(@"Thank your for purchase") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
         [alertView show];
         [self.navigationController popToRootViewControllerAnimated:YES];
         return NO;
+        */
+        SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
+        UINavigationController *navi;
+        navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
+        thankYouPageViewController.order = self.order;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
+            [_popController dismissPopoverAnimated:YES];
+            thankYouPageViewController.popOver = _popController;
+            _popController.delegate = self;
+            navi.navigationBar.tintColor = THEME_COLOR;
+            if (SIMI_SYSTEM_IOS >= 8) {
+                navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
+            }
+            navi.navigationBar.barTintColor = THEME_COLOR;
+            [self.navigationController popToRootViewControllerAnimated:YES];
+            UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+            UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+            [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
+        } else {
+            [self.navigationController pushViewController:thankYouPageViewController animated:YES];
+        }
     }else if ([stringRequest containsString:@"simipayu/index/failure"])
     {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[SCLocalizedString(@"Error") uppercaseString] message:SCLocalizedString(@"Have some errors, please try again") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];

@@ -71,7 +71,7 @@
                 UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
                 [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
             } else {
-                [orderViewController.navigationController pushViewController:navi animated:YES];
+                [orderViewController.navigationController pushViewController:thankYouPageViewController animated:YES];
             }
         }
     }

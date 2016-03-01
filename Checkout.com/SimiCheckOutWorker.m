@@ -72,7 +72,7 @@
             UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
             [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
         } else {
-            [viewController.navigationController pushViewController:navi animated:YES];
+            [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
         }
     } else {
         payment = [noti.userInfo valueForKey:@"payment"];
@@ -139,7 +139,7 @@
             UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
             [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
         } else {
-            [viewController.navigationController pushViewController:navi animated:YES];
+            [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
         }
     } else {
         // fail
