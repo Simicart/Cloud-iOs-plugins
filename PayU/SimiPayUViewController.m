@@ -57,10 +57,9 @@
         } else {
             if ([model valueForKey:@"errors"] != nil) {
                 NSDictionary *errors = [model valueForKey:@"errors"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please choose another payment.", [errors valueForKey:@"message"]] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:@"Sorry, currentcy is not supported. Please choose another payment." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                alertView.tag = 1;
                 [alertView show];
-//                [self stopLoadingData];
-//                [viewController.navigationController popToRootViewControllerAnimated:YES];
             } else {
                 [self startLoadingData];
                 resultUrl = [model valueForKey:@"url"];
@@ -87,6 +86,9 @@
             [self startLoadingData];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:self.order];
         }
+    } else if (alertView.tag == 0) {
+        [self stopLoadingData];
+        [viewController.navigationController popToRootViewControllerAnimated:YES];
     }
 }
 
