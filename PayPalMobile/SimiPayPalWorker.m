@@ -37,7 +37,7 @@
         if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
             payPalAppKey = [payment valueForKey:@"client_id"];
             payPalReceiverEmail = [payment valueForKey:@"paypal_email"];
-            BOOL isSandbox = [[payment valueForKey:@"sandbox"] boolValue];
+            BOOL isSandbox = [[payment valueForKey:@"sand_box"] boolValue];
             @try {
                 if (isSandbox) {
                     [PayPalMobile initializeWithClientIdsForEnvironments:@{PayPalEnvironmentSandbox : payPalAppKey}];
@@ -75,7 +75,7 @@
     payPalReceiverEmail = [payment valueForKey:@"paypal_email"];
     bnCode = [payment valueForKey:@"bncode"];
     
-    BOOL isSandbox = [[payment valueForKey:@"sandbox"] boolValue];
+    BOOL isSandbox = [[payment valueForKey:@"sand_box"] boolValue];
     @try {
         if (isSandbox) {
             [PayPalMobile preconnectWithEnvironment:PayPalEnvironmentSandbox];
