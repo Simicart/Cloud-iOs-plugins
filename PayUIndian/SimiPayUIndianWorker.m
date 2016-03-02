@@ -10,6 +10,7 @@
 #import "SimiPayUIndianModel.h"
 #import <SimiCartBundle/SCOrderViewController.h>
 #import <SimiCartBundle/SCAppDelegate.h>
+#import <SimiCartBundle/SCThankYouPageViewController.h>
 
 @implementation SimiPayUIndianWorker {
     SimiOrderModel *order;
@@ -26,6 +27,8 @@
 {
     self = [super init];
     if (self) {
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
+        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didReceiveNotification:) name:@"CancelOrder" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUIndianPaymentHashConfig" object:nil];
@@ -40,7 +43,47 @@
 }
 
 - (void)didReceiveNotification:(NSNotification *)noti{
-    if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
+    if ([noti.name isEqualToString:@"CancelOrder"]) {
+        // get order id and call api cancel order
+        if (order == nil) {
+            order = noti.object;
+        }
+        if (payment == nil) {
+            payment = [order objectForKey:@"payment"];
+        }
+        if ([[payment valueForKey:@"method_code"] isEqualToString:@"payubiz"]) {
+            [order cancelAnOrder:[order objectForKey:@"_id"]];
+        }
+    } else if ([noti.name isEqualToString:DidCancelOrder]) {
+        order = noti.object;
+        if (payment == nil) {
+            payment = [order objectForKey:@"payment"];
+        }
+        if ([[payment valueForKey:@"method_code"] isEqualToString:@"payubiz"]) {
+            SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
+            UINavigationController *navi;
+            navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
+            thankYouPageViewController.order = order;
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+                _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
+                [_popController dismissPopoverAnimated:YES];
+                thankYouPageViewController.popOver = _popController;
+                _popController.delegate = self;
+                navi.navigationBar.tintColor = THEME_COLOR;
+                if (SIMI_SYSTEM_IOS >= 8) {
+                    navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
+                }
+                navi.navigationBar.barTintColor = THEME_COLOR;
+                [viewController.navigationController popToRootViewControllerAnimated:YES];
+                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+                UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+                [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
+            } else {
+                [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
+            }
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:DidCancelOrder object:nil];
+        }
+    } else if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
         
     } else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]) {
         viewController = [noti.userInfo valueForKey:@"controller"];
@@ -67,7 +110,27 @@
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [alertView show];
         } else {
-            //
+            SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
+            UINavigationController *navi;
+            navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
+            thankYouPageViewController.order = order;
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+                _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
+                [_popController dismissPopoverAnimated:YES];
+                thankYouPageViewController.popOver = _popController;
+                _popController.delegate = self;
+                navi.navigationBar.tintColor = THEME_COLOR;
+                if (SIMI_SYSTEM_IOS >= 8) {
+                    navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
+                }
+                navi.navigationBar.barTintColor = THEME_COLOR;
+                [viewController.navigationController popToRootViewControllerAnimated:YES];
+                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+                UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+                [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
+            } else {
+                [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
+            }
         }
     } else if ([noti.name isEqualToString:@"DidGetPayUIndianPaymentHashConfig"]) {
         SimiResponder *responder = [noti.userInfo valueForKey:@"responder"];
@@ -96,11 +159,9 @@
         viewController = [navi.viewControllers lastObject];
     }
     viewController.isDiscontinue = YES;
-//    payment = [noti.userInfo valueForKey:@"payment"];
-//    if ([[[payment valueForKey:@"method_code"] uppercaseString] isEqualToString:@"PAYUBIZ"]) {
         PayUPaymentOptionsViewController *paymentOptionsVC = nil;
-        if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-        {
+//        if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//        {
             CGSize result = [[UIScreen mainScreen] bounds].size;
             if(result.height == 480)
             {
@@ -110,7 +171,7 @@
             {
                 paymentOptionsVC = [[PayUPaymentOptionsViewController alloc] initWithNibName:@"PayUPaymentOptionsViewController" bundle:nil];
             }
-        }
+//        }
         //Pass the parameters in paramDict in Key-Value pair as mentioned
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                       [paymentData objectForKey:@"productinfo"],@"productinfo",
@@ -139,8 +200,7 @@
             paymentOptionsVC.allHashDict = _hashDict;
         _hashDict = nil;
     viewController.isDiscontinue = YES;
-//    [viewController.navigationController presentViewController:paymentOptionsVC animated:YES completion:nil];
-    paymentOptionsVC.orderId = [order objectForKey:@"_id"];
+    paymentOptionsVC.order = order;
     [viewController.navigationController pushViewController:paymentOptionsVC animated:YES];
 
 }
@@ -170,20 +230,7 @@
 
 }
 - (void) cancel:(NSDictionary *)info{
-    // after payment success or failed. Not cancel an order.
-    /*
-    NSMutableDictionary *updatePaymentParam = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                               order_id, @"order_id",
-                                               txn_id, @"txn_id",
-                                               @"2", @"status",
-                                               nil];
-    if (model == nil) {
-        model = [[SimiPayUIndianModel alloc] init];
-    }
-    [model updatePayment:updatePaymentParam];
-    */
-    [viewController.navigationController popToRootViewControllerAnimated:YES];
-
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:order userInfo:nil];
 }
 -(void)dataReceived:(NSNotification *)noti
 {
@@ -198,8 +245,6 @@
         model = [[SimiPayUIndianModel alloc] init];
     }
     [model updatePayment:updatePaymentParam];
-
-//    [viewController.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end
