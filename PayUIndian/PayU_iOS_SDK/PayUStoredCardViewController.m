@@ -269,8 +269,8 @@
     [customAlertView addSubview:_cvvTextField];
     
     customAlertView.center = self.view.center;
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -278,7 +278,7 @@
             frame.origin.y = frame.origin.y - 50;
             customAlertView.frame = frame;
         }
-    }
+//    }
     
     [self.view addSubview:customAlertView];
     
@@ -484,8 +484,8 @@
     
     PayUPaymentResultViewController *resultViewController = [[PayUPaymentResultViewController alloc] initWithNibName:@"PayUPaymentResultViewController" bundle:nil];
     resultViewController.request = theRequest;
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -496,15 +496,15 @@
             resultViewController.flag = NO;
         }
         
-    }
+//    }
     [self.navigationController pushViewController:resultViewController animated:YES];
 }
 
 -(IBAction) makePaymentWIthNewCard :(UIButton *) newCardBtn{
     
     PayUCardProcessViewController *cardProcessCV = nil;
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -514,7 +514,7 @@
         {
             cardProcessCV = [[PayUCardProcessViewController alloc] initWithNibName:@"PayUCardProcessViewController" bundle:nil];
         }
-    }
+//    }
     if(_appTitle){
         cardProcessCV.appTitle = _appTitle;
     }
@@ -527,8 +527,8 @@
     
     if(2 != buttonIndex){
         PayUCardProcessViewController *cardProcessCV = nil;
-        if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-        {
+//        if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//        {
             CGSize result = [[UIScreen mainScreen] bounds].size;
             if(result.height == IPHONE_3_5)
             {
@@ -538,7 +538,7 @@
             {
                 cardProcessCV = [[PayUCardProcessViewController alloc] initWithNibName:@"PayUCardProcessViewController" bundle:nil];
             }
-        }
+//        }
         if(_appTitle){
             cardProcessCV.appTitle = _appTitle;
         }

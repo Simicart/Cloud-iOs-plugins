@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SimiOrderModel.h"
 
 @interface PayUPaymentOptionsViewController : UIViewController
 
 @property (nonatomic, copy) NSString *command;
 @property (nonatomic, copy) NSString *var1;
 @property (weak, nonatomic) IBOutlet UILabel *TxnID;
-@property (nonatomic, strong) NSString *orderId;
+@property (nonatomic, strong) SimiOrderModel *order;
 
 @property (nonatomic,strong) NSMutableDictionary *parameterDict;
 

@@ -129,10 +129,7 @@ typedef enum : NSUInteger {
         if(buttonIndex == 0){
             
         }else if(buttonIndex == 1){
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:nil userInfo:@{@"order_id" : self.orderId}];
-            //[self.navigationController popToRootViewControllerAnimated:YES];
-            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"Your order is cancelled" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-            [alert show];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:self.order userInfo:nil];
         }
     }
 }
@@ -169,8 +166,8 @@ typedef enum : NSUInteger {
 - (void) loadAllStoredCard:(int) aFlag{
     
     PayUStoredCardViewController *storedCard = nil;
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -180,7 +177,7 @@ typedef enum : NSUInteger {
         {
             storedCard = [[PayUStoredCardViewController alloc] initWithNibName:@"PayUStoredCardViewController" bundle:nil];
         }
-    }
+//    }
     storedCard.appTitle = _appTitle;
     storedCard.totalAmount = _totalAmount;
     [self.navigationController pushViewController:storedCard animated:YES];
@@ -189,8 +186,8 @@ typedef enum : NSUInteger {
 -(void) loadCCDCView:(int)cardFlag {
     
     PayUCardProcessViewController *cardProcessCV = nil;
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -200,7 +197,7 @@ typedef enum : NSUInteger {
         {
             cardProcessCV = [[PayUCardProcessViewController alloc] initWithNibName:@"PayUCardProcessViewController" bundle:nil];
         }
-    }
+//    }
     cardProcessCV.appTitle = _appTitle;
     cardProcessCV.CCDCFlag = cardFlag;
     [self.navigationController pushViewController:cardProcessCV animated:YES];
@@ -223,8 +220,8 @@ typedef enum : NSUInteger {
         return [item1[PARAM_BANK] compare:item2[PARAM_BANK] options:NSNumericSearch];
     }];
     PayUEMIOptionViewController *emiOprionVC = nil;
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -237,7 +234,7 @@ typedef enum : NSUInteger {
         {
             emiOprionVC = [[PayUEMIOptionViewController alloc] initWithNibName:@"PayUEMIOptionViewController" bundle:nil];
         }
-    }
+//    }
     
     
     emiOprionVC.emiDetails = listOfBankAvailableForEMI;
@@ -292,8 +289,8 @@ typedef enum : NSUInteger {
     
     PayUCashCardViewController *cashCardVC = nil;
     
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -303,7 +300,7 @@ typedef enum : NSUInteger {
         {
             cashCardVC = [[PayUCashCardViewController alloc] initWithNibName:@"PayUCashCardViewController" bundle:nil];
         }
-    }
+//    }
     
     cashCardVC.cashCardDetail = listOfBankAvailableCashCardPayment;
     listOfBankAvailableCashCardPayment = nil;
@@ -318,8 +315,8 @@ typedef enum : NSUInteger {
     
     PayUPaymentResultViewController *resultViewController = [[PayUPaymentResultViewController alloc] initWithNibName:@"PayUPaymentResultViewController" bundle:nil];
     resultViewController.request = [connectionHandler URLRequestForPayWithPayUMoney];;
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-    {
+//    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+//    {
         CGSize result = [[UIScreen mainScreen] bounds].size;
         if(result.height == IPHONE_3_5)
         {
@@ -330,7 +327,7 @@ typedef enum : NSUInteger {
             resultViewController.flag = NO;
         }
         
-    }
+//    }
     
     [self.navigationController pushViewController:resultViewController animated:YES];
 

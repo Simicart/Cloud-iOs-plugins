@@ -46,7 +46,7 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:currentNotificationName object:self userInfo:@{@"responder":responder}];
         }
     } else if ([currentNotificationName isEqualToString:@"DidUpdatePayUIndianPaymentConfig"]) {
-        
+        [[NSNotificationCenter defaultCenter] postNotificationName:currentNotificationName object:self userInfo:@{@"responder":responder}];
     }
 }
 
