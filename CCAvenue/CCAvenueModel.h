@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <SimiCartBundle/SimiOrderModel.h>
 
 #define DidGetRSACCAvenue  @"DidGetRSACCAvenue"
 #define DidUpdateCCAvenuePayment @"DidUpdateCCAvenuePayment"
