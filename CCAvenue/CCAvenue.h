@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "CCAvenueModel.h"
 #import "CCWebViewController.h"
 
 @interface CCAvenue : NSObject
