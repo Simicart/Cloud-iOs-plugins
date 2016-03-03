@@ -67,15 +67,9 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navigationController.navigationItem.title = _appTitle;
     self.navigationController.title = @"PayUBiz";
-    self.navigationItem.hidesBackButton = YES;
-    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
-    backButton.title = @"Cancel";
-    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
-    [leftBarButtons addObjectsFromArray:@[backButton]];
-    self.navigationItem.leftBarButtonItems = leftBarButtons;
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:@"DidUpdatePayUIndianPaymentConfig" object:nil];
+
     _connectionSpecificDataObject = [[NSMutableData alloc] init];
     
     //setting up preferred Payment option tableView
@@ -118,21 +112,6 @@ typedef enum : NSUInteger {
 
 }
 
--(void) cancelPayment:(id) sender{
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Are you sure that you want to cancel the order?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-    [alertView show];
-    alertView.tag = 0;
-}
-
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(alertView.tag == 0){
-        if(buttonIndex == 0){
-            
-        }else if(buttonIndex == 1){
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:self.order userInfo:nil];
-        }
-    }
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

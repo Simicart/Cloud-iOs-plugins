@@ -43,7 +43,7 @@
 }
 
 - (void)didReceiveNotification:(NSNotification *)noti{
-    SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
+//    SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
     if ([noti.name isEqualToString:@"DidGetPayUDirectLinkConfig"]) {
         SimiResponder *responder = [noti.userInfo valueForKey:@"responder"];
         if (![responder.status isEqualToString: @"SUCCESS"]) {
