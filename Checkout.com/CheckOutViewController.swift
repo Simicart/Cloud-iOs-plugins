@@ -55,6 +55,8 @@ class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidCreateCheckOutPaymentConfig" object:nil];
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didUpdatePayment:", name: "DidCreateCheckOutPaymentConfig", object: nil)
         self.nameField.delegate = self
         self.numberField.delegate = self
         self.dateField.delegate = self
@@ -91,6 +93,10 @@ class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPi
         self.cvvField.text = "956"
         self.month = "06"
         self.year = "2017"
+    }
+    
+    func didUpdatePayment(noti : NSNotification) {
+        self.moveToThankyouPageWithNotification(noti)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -314,7 +320,7 @@ class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPi
                             alertView.show()
                         } else {
                             // do when success
-                            let param  = ["order_id" : self.orderData.objectForKey("_id") as! String, "cart_token" : resp.model!.cardToken]
+                            let param  = ["order_id" : self.order.objectForKey("_id") as! String, "cart_token" : resp.model!.cardToken]
                             self.simiCheckOutModel.createCheckOutPaymentWithParam(param)
                         }
                         self.cardTokenButton.enabled = true
