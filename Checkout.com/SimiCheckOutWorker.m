@@ -29,7 +29,6 @@
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
-//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidCreateCheckOutPaymentConfig" object:nil];
     }
     return self;
 }
@@ -46,13 +45,6 @@
             publishKey = [model valueForKey:@"public_key"];
         }
     }
-    /*else if ([noti.name isEqualToString:@"DidCreateCheckOutPaymentConfig"]) {
-        paymentVC = [[SCPaymentViewController alloc] init];
-        paymentVC.order = order;
-        [paymentVC moveToThankyouPageWithNotification:noti];
-     
-    }
-     */
     else {
         payment = [noti.userInfo valueForKey:@"payment"];
         NSLog(@"payment_method : %@", payment);
@@ -81,7 +73,6 @@
         CheckOutViewController *checkoutViewController = [[CheckOutViewController alloc] init];
         checkoutViewController.publishKey = publishKey;
         checkoutViewController.simiCheckOutModel = model;
-//        checkoutViewController.orderData = orderData;
         checkoutViewController.order = orderData;
         viewController.isDiscontinue = YES;
         [viewController.navigationController pushViewController:checkoutViewController animated:YES];
