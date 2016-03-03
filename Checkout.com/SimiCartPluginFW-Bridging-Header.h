@@ -8,3 +8,4 @@
 #import <SimiCartBundle/SimiOrderModel.h>
 #import <SimiCartBundle/SCThankYouPageViewController.h>
 #import <SimiCartBundle/SimiGlobalVar.h>
+#import <SimiCartBundle/SCPaymentViewController.h>
