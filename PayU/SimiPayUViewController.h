@@ -9,8 +9,9 @@
 #import <SimiCartBundle/SimiCartBundle.h>
 #import "SimiPayUViewController.h"
 #import <SimiCartBundle/SimiOrderModel.h>
+#import <SimiCartBundle/SCPaymentViewController.h>
 
-@interface SimiPayUViewController : UIViewController<UIWebViewDelegate, UIPopoverControllerDelegate>
+@interface SimiPayUViewController : SCPaymentViewController<UIWebViewDelegate, UIPopoverControllerDelegate>
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) SimiOrderModel* order;
 @property (strong, nonatomic) UIPopoverController * popController;
