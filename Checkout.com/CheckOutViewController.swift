@@ -23,9 +23,8 @@ extension UIColor {
     }
 }
 
-class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIAlertViewDelegate, UIPopoverControllerDelegate {
+class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPopoverControllerDelegate {
     // checkout
-//    @property (nonatomic, strong) SimiOrderModel* order;
     var simiCheckOutModel : SimiCheckOutModel!
     var pickerContent: [[String]] = []
     let months = [1,2,3,4,5,6,7,8,9,10,11,12]
@@ -82,15 +81,6 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         for (var y = 0 ; y < years.count ; y++) {
             pickerContent[1].append(years[y].description)
         }
-        // setup navigation back
-        
-        self.navigationController? .setNavigationBarHidden(false, animated:true)
-        let backButton = UIButton(type: UIButtonType.Custom)
-        backButton.addTarget(self, action: "cancelBtnHandle:", forControlEvents: UIControlEvents.TouchUpInside)
-        backButton.setTitle("Cancel", forState: UIControlState.Normal)
-        backButton.sizeToFit()
-        let backButtonItem = UIBarButtonItem(customView: backButton)
-        self.navigationItem.leftBarButtonItem = backButtonItem
         self.datePicker.delegate = self
         self.datePicker.hidden = true
         self.doneButton.hidden = true
@@ -101,18 +91,6 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         self.cvvField.text = "956"
         self.month = "06"
         self.year = "2017"
-    }
-    
-    func cancelBtnHandle(sender : AnyObject) {
-        let alertView : UIAlertView = UIAlertView(title: "Are you sure want to cancel?", message: "", delegate: self, cancelButtonTitle: "Yes", otherButtonTitles: "No")
-        alertView.show()
-    }
-    
-    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        if buttonIndex == alertView.cancelButtonIndex {
-            self.startLoading()
-            NSNotificationCenter.defaultCenter().postNotificationName("CancelOrder", object: orderData)
-        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -280,25 +258,6 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
         cardTokenButton.hidden = true
     }
     
-    func startLoading() {
-        if loadingView.isAnimating() == false {
-            let frame : CGRect = self.view.frame
-            loadingView = UIActivityIndicatorView.init(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
-            loadingView.hidesWhenStopped = true
-            loadingView.center = CGPointMake(frame.size.width/2, frame.size.height/2)
-            self.view.addSubview(loadingView)
-            loadingView.startAnimating()
-            self.view.alpha = 0.5
-        }
-    }
-    
-    func stopLoading() {
-        self.view.userInteractionEnabled = true
-        self.view.alpha = 1
-        loadingView.stopAnimating()
-        loadingView.removeFromSuperview()
-    }
-    
     func getCardToken() {
         // check empty
         if self.nameField.text?.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) == "" {
@@ -329,7 +288,7 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
             alertView.show()
             return
         }
-        self.startLoading()
+        self.startLoadingData()
         self.cardTokenButton.enabled = false
         self.edittingTf.resignFirstResponder()
         let ck = try? CheckoutKit.getInstance(publishKey as String)
@@ -342,7 +301,7 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
                 let card = try? Card(name: nameField.text, number: numberField.text!, expYear: year, expMonth: month, cvv: cvvField.text!, billingDetails: nil);
                 if card == nil {
                     self.cardTokenButton.enabled = true
-                    self.stopLoading()
+                    self.stopLoadingData()
                     print("card nil")
                     let alertView = UIAlertView(title: "Error", message: "Card not exist, Please input another card", delegate: nil, cancelButtonTitle: "OK")
                     alertView.show()
@@ -362,7 +321,7 @@ class CheckOutViewController: UIViewController, UITextFieldDelegate, UIPickerVie
                     })
                 }
             } else {
-                self.stopLoading()
+                self.startLoadingData()
                 self.cardTokenButton.enabled = true
             }
         }

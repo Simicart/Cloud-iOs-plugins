@@ -11,6 +11,7 @@
 #import <SimiCartBundle/SimiOrderModel.h>
 #import <SimiCartBundle/SCAppDelegate.h>
 #import <SimiCartBundle/SCThankYouPageViewController.h>
+#import <SimiCartBundle/SCPaymentViewController.h>
 #import "SimiCartPluginFW-Swift.h"
 
 @implementation SimiCheckOutWorker {
@@ -19,6 +20,7 @@
     SimiOrderModel *order;
     SimiCheckOutModel *model;
     NSString *publishKey;
+    SCPaymentViewController *paymentVC;
 }
 
 - (id)init
@@ -28,8 +30,6 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidCreateCheckOutPaymentConfig" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"CancelOrder" object:nil];
     }
     return self;
 }
@@ -46,38 +46,8 @@
             publishKey = [model valueForKey:@"public_key"];
         }
     } else if ([noti.name isEqualToString:@"DidCreateCheckOutPaymentConfig"]) {
-        [self didCreatePayment:noti];
-    } else if ([noti.name isEqualToString:@"CancelOrder"]) {
-        // get order id and call api cancel order
-        order = noti.object;
-        [order cancelAnOrder:[order objectForKey:@"_id"]];
-    } else if ([noti.name isEqualToString:DidCancelOrder]) {
-        order = noti.object;
-        payment = [noti.userInfo valueForKey:@"payment"];
-        NSLog(@"payment_method : %@", payment);
-        if ([[payment valueForKey:@"method_code"] isEqualToString:@"checkout"]) {
-            SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
-            UINavigationController *navi;
-            navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
-            thankYouPageViewController.order = order;
-            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-                _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
-                [_popController dismissPopoverAnimated:YES];
-                thankYouPageViewController.popOver = _popController;
-                _popController.delegate = self;
-                navi.navigationBar.tintColor = THEME_COLOR;
-                if (SIMI_SYSTEM_IOS >= 8) {
-                    navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
-                }
-                navi.navigationBar.barTintColor = THEME_COLOR;
-                [viewController.navigationController popToRootViewControllerAnimated:YES];
-                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-                UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
-                [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
-            } else {
-                [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
-            }
-        }
+        paymentVC = [[SCPaymentViewController alloc] init];
+        [paymentVC moveToThankyouPageWithNotification:noti];
     } else {
         payment = [noti.userInfo valueForKey:@"payment"];
         NSLog(@"payment_method : %@", payment);
@@ -111,44 +81,6 @@
         [viewController.navigationController pushViewController:checkoutViewController animated:YES];
     } else {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:@"Non Publish key" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alertView show];
-    }
-}
-
--(void)didCreatePayment:(NSNotification *)noti{
-    SimiResponder *responder = [noti.userInfo objectForKey:@"responder"];
-    viewController = [noti.userInfo valueForKey:@"controller"];
-    if (!viewController) {
-        UINavigationController *navi = (UINavigationController *)[(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication] delegate] window] rootViewController] selectedViewController];
-        viewController = [navi.viewControllers lastObject];
-    }
-    if ([responder.status isEqualToString:@"SUCCESS"]) {
-        // get order Data
-        SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
-        UINavigationController *navi;
-        navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
-        thankYouPageViewController.order = [[SimiOrderModel alloc] initWithDictionary:model];
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-            _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
-            [_popController dismissPopoverAnimated:YES];
-            thankYouPageViewController.popOver = _popController;
-            _popController.delegate = self;
-            navi.navigationBar.tintColor = THEME_COLOR;
-            if (SIMI_SYSTEM_IOS >= 8) {
-                navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
-            }
-            navi.navigationBar.barTintColor = THEME_COLOR;
-            [viewController.navigationController popToRootViewControllerAnimated:YES];
-            UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-            UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
-            [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
-        } else {
-            [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
-        }
-    } else {
-        // fail
-        [viewController.navigationController popToRootViewControllerAnimated:YES];
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:@"Some thing wrong. Please try again" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alertView show];
     }
 }
