@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <SimiCartBundle/SimiOrderModel.h>
 
 #define DidGetRSACCAvenue  @"DidGetRSACCAvenue"
 #define DidUpdateCCAvenuePayment @"DidUpdateCCAvenuePayment"
@@ -15,5 +16,7 @@
 
 -(void) getRSAForOrder:(NSString* ) orderID;
 -(void) updatePaymentWithOrder:(NSString* ) orderID status:(NSString*) status;
+
+
 
 @end

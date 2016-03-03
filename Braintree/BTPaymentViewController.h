@@ -17,14 +17,15 @@
 #import "BraintreeUI.h"
 #import "BTCardClient.h"
 #import <SimiCartBundle/SimiGlobalVar.h>
+#import <SimiCartBundle/SCPaymentViewController.h>
+
 
 static NSString* const PAYMENTSECTION = @"PAYMENTSECTION";
 
-@interface BTPaymentViewController: UIViewController<UITableViewDelegate, UITableViewDataSource,PKPaymentAuthorizationViewControllerDelegate,BTViewControllerPresentingDelegate,BTAppSwitchDelegate, BTDropInViewControllerDelegate, UIAlertViewDelegate>
+@interface BTPaymentViewController: SCPaymentViewController<UITableViewDelegate, UITableViewDataSource,PKPaymentAuthorizationViewControllerDelegate,BTViewControllerPresentingDelegate,BTAppSwitchDelegate, BTDropInViewControllerDelegate>
 
 
 @property (nonatomic, strong) BTAPIClient *braintreeClient;
 @property (nonatomic, strong) NSMutableArray* listBraintreePayments;
 @property (nonatomic, strong) NSString* clientToken, *appleMerchant;
-@property (nonatomic, strong) SimiOrderModel* order;
 @end

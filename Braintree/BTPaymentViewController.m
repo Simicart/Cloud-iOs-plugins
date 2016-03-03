@@ -20,14 +20,13 @@
 
 @implementation BTPaymentViewController{
     SimiBraintreeModel* braintreeModel;
-    UIBarButtonItem *backItem;
-    UIActivityIndicatorView* simiLoading;
 }
 @synthesize braintreeClient;
 
 
 
 -(void) viewDidLoad{
+    [super viewDidLoad];
     self.braintreeClient = [[BTAPIClient alloc] initWithAuthorization:self.clientToken];
     if([self.listBraintreePayments containsObject:@"android_pay"])
         [self.listBraintreePayments removeObject:@"android_pay"];
@@ -43,20 +42,6 @@
     //    tableView.separatorColor = [UIColor clearColor];
     self.view = tableView;
     self.title = SCLocalizedString(@"Braintree");
-    
-    self.navigationItem.hidesBackButton = YES;
-    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
-    backButton.title = SCLocalizedString(@"Cancel");
-    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
-    [leftBarButtons addObjectsFromArray:@[backButton]];
-    self.navigationItem.leftBarButtonItems = leftBarButtons;
-    
-}
-
--(void) cancelPayment:(id) sender{
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Confirmation") message:SCLocalizedString(@"Are you sure that you want to cancel the order?") delegate:self cancelButtonTitle:SCLocalizedString(@"Cancel") otherButtonTitles:SCLocalizedString(@"OK"), nil];
-    [alertView show];
-    alertView.tag = 0;
 }
 
 
@@ -185,38 +170,11 @@
 - (void)postNonceToServer:(NSString *)paymentMethodNonce {
     if(!braintreeModel)
         braintreeModel = [SimiBraintreeModel new];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:BRAINTREESENDNONCETOSERVER object:braintreeModel];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:BRAINTREESENDNONCETOSERVER object:braintreeModel];
     [self startLoadingData];
     [braintreeModel sendNonceToServer:paymentMethodNonce andOrderID:[self.order valueForKey:@"_id"]];
 }
 
--(void) didReceiveNotification:(NSNotification *)noti{
-    [self stopLoadingData];
-    SimiResponder* responder = [noti.userInfo valueForKey:@"responder"];
-    if([responder.status isEqualToString:@"SUCCESS"]){
-        if([noti.name isEqualToString:BRAINTREESENDNONCETOSERVER] || [noti.name isEqualToString:DidCancelOrder]){
-            SCThankYouPageViewController* thankyouPage = [SCThankYouPageViewController new];
-            thankyouPage.order = self.order;
-            [thankyouPage.navigationItem setHidesBackButton:YES];
-            if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-                [self.navigationController pushViewController:thankyouPage animated:YES];
-            else{
-                [self.navigationController popToRootViewControllerAnimated:YES];
-                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-                UIViewController *viewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
-                UINavigationController* nvThankyou = [[UINavigationController alloc] initWithRootViewController:thankyouPage];
-                UIPopoverController* tkPoppver = [[UIPopoverController alloc] initWithContentViewController:nvThankyou];
-                thankyouPage.popOver = tkPoppver;
-                
-                [tkPoppver presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:viewController.view permittedArrowDirections:0 animated:YES];
-            }
-        }
-    }else{
-//        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:responder.message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//        [alertView show];
-    }
-    [self removeObserverForNotification:noti];
-}
 
 #pragma mark - BTViewControllerPresentingDelegate
 
@@ -279,46 +237,6 @@ requestsDismissalOfViewController:(UIViewController *)viewController {
 
 - (void)dropInViewControllerDidCancel:(BTDropInViewController *)viewController{
     NSLog(@"DIDCANCEL");
-}
-
-
-- (void)startLoadingData{
-    if (!simiLoading.isAnimating) {
-        CGRect frame = self.view.frame;
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && self.navigationController) {
-            if (frame.size.width > self.navigationController.view.frame.size.width) {
-                frame = self.navigationController.view.frame;
-            }
-        }
-        
-        simiLoading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        simiLoading.hidesWhenStopped = YES;
-        simiLoading.center = CGPointMake(frame.size.width/2, frame.size.height/2);
-        [self.view addSubview:simiLoading];
-        self.view.userInteractionEnabled = NO;
-        [simiLoading startAnimating];
-        self.view.alpha = 0.5;
-    }
-}
-
-- (void)stopLoadingData{
-    self.view.userInteractionEnabled = YES;
-    self.view.alpha = 1;
-    [simiLoading stopAnimating];
-    [simiLoading removeFromSuperview];
-}
-
-//UIAlertViewDelegate
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(alertView.tag == 0){
-        if(buttonIndex == 0){
-            
-        }else if(buttonIndex == 1){
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
-            [self startLoadingData];
-            [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
-        }
-    }
 }
 
 

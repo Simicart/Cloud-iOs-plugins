@@ -4,9 +4,9 @@
 #import <SimiCartBundle/SimiViewController.h>
 #import <SimiCartBundle/SimiResponder.h>
 #import <SimiCartBundle/SCThankYouPageViewController.h>
+#import <SimiCartBundle/SCPaymentViewController.h>
 
-@interface KlarnaViewController : UIViewController<UIWebViewDelegate>
+@interface KlarnaViewController : SCPaymentViewController <UIWebViewDelegate>
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) NSString* url;
-@property (nonatomic, strong) SimiOrderModel* order;
 @end
