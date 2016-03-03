@@ -16,6 +16,7 @@
 
 @implementation CCWebViewController{
     CCAvenueModel* ccAvenueModel;
+    NSString *html;
 }
 
 @synthesize rsaKey;@synthesize accessCode;@synthesize merchantId;@synthesize order;
@@ -75,24 +76,25 @@
     [self stopLoadingData];
     NSString *string = webView.request.URL.absoluteString;
     if ([string rangeOfString:redirectUrl].location != NSNotFound) {
-        NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
-//        if(order)
-//            ccAvenueModel = order;
-//        else
-            ccAvenueModel = [CCAvenueModel new];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:DidUpdateCCAvenuePayment object:nil];
-        [self startLoadingData];
-        if (([html rangeOfString:@"Aborted"].location != NSNotFound) ||
-            ([html rangeOfString:@"Cancel"].location != NSNotFound)) {
-            [ccAvenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"2"];
-        }else if (([html rangeOfString:@"Success"].location != NSNotFound)) {
-            [ccAvenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"1"];
-        }else if ([html rangeOfString:@"Fail"].location != NSNotFound || [html rangeOfString:@"Error"].location != NSNotFound) {
-            [ccAvenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"0"];
-        }
+        html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
+        [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(updatePayment) userInfo:nil repeats:NO];
     }
 }
 
+-(void) updatePayment{
+    ccAvenueModel = [CCAvenueModel new];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:DidUpdateCCAvenuePayment object:nil];
+    [self startLoadingData];
+    if (([html rangeOfString:@"Aborted"].location != NSNotFound) ||
+        ([html rangeOfString:@"Cancel"].location != NSNotFound)) {
+        [ccAvenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"2"];
+    }else if (([html rangeOfString:@"Success"].location != NSNotFound)) {
+        [ccAvenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"1"];
+    }else if ([html rangeOfString:@"Fail"].location != NSNotFound || [html rangeOfString:@"Error"].location != NSNotFound) {
+        [ccAvenueModel updatePaymentWithOrder:[order valueForKey:@"_id"] status:@"0"];
+    }
+
+}
 -(void) webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
 //    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@",error] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
 //    [alert show];
