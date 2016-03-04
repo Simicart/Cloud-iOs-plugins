@@ -29,8 +29,6 @@
 {
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(didReceiveNotification:) name:@"CancelOrder" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUIndianPaymentHashConfig" object:nil];
@@ -163,7 +161,7 @@
 
 }
 - (void) cancel:(NSDictionary *)info{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"CancelOrder" object:order userInfo:nil];
+    [viewController.navigationController popToRootViewControllerAnimated:YES];
 }
 -(void)dataReceived:(NSNotification *)noti
 {
