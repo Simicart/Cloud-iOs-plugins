@@ -40,6 +40,7 @@
     }
     [model getDirectLink:param];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUDirectLinkConfig" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:@"moveToThankYouPage" object:nil];
 }
 
 - (void)didReceiveNotification:(NSNotification *)noti{
@@ -65,7 +66,21 @@
     }
 }
 
-
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == 1) {
+        if(buttonIndex == alertView.cancelButtonIndex) {
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:DidCancelOrder object:nil];
+            [self startLoadingData];
+            if(self.order)
+                [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
+            else{
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Thank you") message:SCLocalizedString(@"Your order is cancelled.") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        }
+    }
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -103,7 +118,8 @@
         } else {
             [self.navigationController pushViewController:thankYouPageViewController animated:YES];
         }
-    }else if ([stringRequest containsString:@"simipayu/index/failure"])
+
+    } else if ([stringRequest containsString:@"simipayu/index/failure"])
     {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[SCLocalizedString(@"Error") uppercaseString] message:SCLocalizedString(@"Have some errors, please try again") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
         [alertView show];
