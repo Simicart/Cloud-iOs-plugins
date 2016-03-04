@@ -327,7 +327,7 @@ class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPi
                     })
                 }
             } else {
-                self.startLoadingData()
+                self.stopLoadingData()
                 self.cardTokenButton.enabled = true
             }
         }

@@ -49,11 +49,11 @@
             
             switch (modelActionType) {
                 case ModelActionTypeInsert:{
-                    [self addData:[responseObjectData valueForKey:@"order"]];
+                    [self addData:[responseObjectData valueForKey:@"invoice"]];
                 }
                     break;
                 default:{
-                    [self setData:[responseObjectData valueForKey:@"order"]];
+                    [self setData:[responseObjectData valueForKey:@"invoice"]];
                 }
                     break;
             }
