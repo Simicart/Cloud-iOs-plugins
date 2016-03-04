@@ -19,6 +19,7 @@
     NSString *bnCode;
     SimiViewController *viewController;
     SimiOrderModel *order;
+    PayPalPaymentViewController* currentPaypalVC;
 }
 
 - (id)init
@@ -154,33 +155,23 @@
         {
             [viewController.navigationController popToRootViewControllerAnimated:NO];
         }
-        if([[order valueForKey:@"status"] isEqualToString:@"pending"] || [[order valueForKey:@"status"] isEqualToString:@"paid"]){
-            if(!((SCOrderViewController*)viewController).isNewCustomer){
-                SCThankYouPageViewController *thankVC = [[SCThankYouPageViewController alloc] init];
-                thankVC.number = [order valueForKey:@"seq_no"];
-                thankVC.order = order;
-                if(((SCOrderViewController*)viewController).checkoutGuest){
-                    thankVC.isGuest = YES;
-                }else
-                    thankVC.isGuest = NO;
-                UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-                if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-                    [(UINavigationController *)currentVC pushViewController:thankVC animated:YES];
-                }else{
-                    UINavigationController *navi;
-                    navi = [[UINavigationController alloc]initWithRootViewController:thankVC];
-                    UIPopoverController* popThankController = [[UIPopoverController alloc] initWithContentViewController:navi];
-                    thankVC.popOver = popThankController;
-                    [popThankController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentVC.view permittedArrowDirections:0 animated:YES];
-                }
+            SCThankYouPageViewController *thankVC = [[SCThankYouPageViewController alloc] init];
+            thankVC.number = [order valueForKey:@"seq_no"];
+            thankVC.order = order;
+            if(((SCOrderViewController*)viewController).checkoutGuest){
+                thankVC.isGuest = YES;
+            }else
+                thankVC.isGuest = NO;
+            UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+                [(UINavigationController *)currentVC pushViewController:thankVC animated:YES];
+            }else{
+                UINavigationController *navi;
+                navi = [[UINavigationController alloc]initWithRootViewController:thankVC];
+                UIPopoverController* popThankController = [[UIPopoverController alloc] initWithContentViewController:navi];
+                thankVC.popOver = popThankController;
+                [popThankController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentVC.view permittedArrowDirections:0 animated:YES];
             }
-        }else if([[order valueForKey:@"status"] isEqualToString:@"cancelled"]){
-            alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"") message:SCLocalizedString(@"Your payment is cancelled.") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
-            [alertView show];
-        }
-        else{
-        
-        }
     }
     [self removeObserverForNotification:noti];
 }
@@ -201,12 +192,12 @@
     if (SIMI_DEBUG_ENABLE) {
         NSLog(@"PayPal Payment Canceled");
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdatePaymentStatus:) name:DidUpdatePaymentStatus object:order];
-    [paymentViewController dismissViewControllerAnimated:YES completion:^{
-        [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    }];
-    [viewController startLoadingData];
-    [order updateOrderWithPaymentStatus:PaymentStatusCancelled proof:nil];
+    currentPaypalVC = paymentViewController;
+    UIAlertView* confirmAlert = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Confirmation") message:SCLocalizedString(@"Are you sure that you want to cancel this order?") delegate:self cancelButtonTitle:SCLocalizedString(@"Cancel") otherButtonTitles:SCLocalizedString(@"OK"), nil];
+    confirmAlert.tag = 1;
+    [confirmAlert show];
+    
+    
 }
 
 #pragma mark Proof of payment validation
@@ -224,6 +215,17 @@
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
     if (alertView.tag == ALERT_VIEW_ERROR) {
         [self payPalPaymentDidCancel:nil];
+    }else if(alertView.tag == 1){
+        if (buttonIndex == 1) {
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdatePaymentStatus:) name:DidUpdatePaymentStatus object:order];
+            if (currentPaypalVC) {
+                [currentPaypalVC dismissViewControllerAnimated:YES completion:^{
+                    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+                }];
+            }
+            [viewController startLoadingData];
+            [order updateOrderWithPaymentStatus:PaymentStatusCancelled proof:nil];
+        }
     }
 }
 
