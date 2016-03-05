@@ -162,6 +162,28 @@
 }
 - (void) cancel:(NSDictionary *)info{
     [viewController.navigationController popToRootViewControllerAnimated:YES];
+    
+    SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
+    UINavigationController *navi;
+    navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
+    thankYouPageViewController.order = order;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
+        [_popController dismissPopoverAnimated:YES];
+        thankYouPageViewController.popOver = _popController;
+        _popController.delegate = self;
+        navi.navigationBar.tintColor = THEME_COLOR;
+        if (SIMI_SYSTEM_IOS >= 8) {
+            navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
+        }
+        navi.navigationBar.barTintColor = THEME_COLOR;
+        [viewController.navigationController popToRootViewControllerAnimated:YES];
+        UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
+        UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
+        [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
+    } else {
+        [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
+    }
 }
 -(void)dataReceived:(NSNotification *)noti
 {

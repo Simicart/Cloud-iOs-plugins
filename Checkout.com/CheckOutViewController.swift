@@ -96,6 +96,7 @@ class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPi
     }
     
     func didUpdatePayment(noti : NSNotification) {
+        print("order : \(order)")
         self.moveToThankyouPageWithNotification(noti)
     }
     
