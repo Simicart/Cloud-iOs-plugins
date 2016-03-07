@@ -94,10 +94,11 @@
 }
 
 - (void)didCancelPayment:(NSNotification *)noti{
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"FAIL") message:SCLocalizedString(@"Your order has been canceled") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
-    [alertView show];
-    [self.navigationController popToRootViewControllerAnimated:YES];
+//    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"FAIL") message:SCLocalizedString(@"Your order has been canceled") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
+//    [alertView show];
     [self stopLoadingData];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self moveToThankyouPageWithNotification:noti];
     [self removeObserverForNotification:noti];
 }
 

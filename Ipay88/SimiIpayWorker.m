@@ -45,15 +45,12 @@
     } else if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
 
     } else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]) {
-        NSLog(@"noti after get config : %@", noti);
         payment = [noti.userInfo valueForKey:@"payment"];
         orderInfo = noti.object;
-        NSLog(@"payment after did place : %@", payment);
         if ([[payment valueForKey:@"method_code"] isEqualToString:METHOD_IPAY]) {
             [self didSelectedPaymentMethod:noti];
         }
     } else if ([noti.name isEqualToString:@"DidGetConfig"]) {
-        NSLog(@"noti after get config : %@", noti);
         payment = nil;
         payment = noti.object;
         [self didPlaceOrder:noti];
@@ -63,8 +60,8 @@
 - (void)didSelectedPaymentMethod:(NSNotification *)noti {
     if (order == nil) {
         order = [[SimiIpayModel alloc] init];
-        [order getConfigWithParams:nil];
-    }
+     }
+    [order getConfigWithParams:nil];
 }
 
 - (void)didPlaceOrder:(NSNotification *)noti
@@ -74,7 +71,6 @@
     if(order != nil && payment != nil){
         SimiIpayViewController *nextController = [[SimiIpayViewController alloc] init];
         nextController.title =  SCLocalizedString(@"Ipay88");
-        NSLog(@"orderInfo : %@", orderInfo);
         nextController.order = orderInfo;
         nextController.payment = payment;
         [(UINavigationController *)currentVC pushViewController:nextController animated:YES];
