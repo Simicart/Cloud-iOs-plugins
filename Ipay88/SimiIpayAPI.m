@@ -16,6 +16,6 @@
 }
 - (void)updateIpayOrderWithParams:(NSMutableDictionary *)params target:(id)target selector:(SEL)selector{
     NSString *url = [NSString stringWithFormat:@"%@%@", kBaseURL, kSimiUpdateIpayPayment];
-    [self requestWithURL:url params:params target:target selector:selector header:nil];
+    [self requestWithMethod:@"POST" URL:url params:params target:target selector:selector header:nil];
 }
 @end

@@ -47,16 +47,17 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:currentNotificationName object:self userInfo:@{@"responder":responder}];
         }
     } else if ([currentNotificationName isEqualToString:@"DidUpdateIpayPayment"]) {
+        NSLog(@"responseObject : %@", responseObject);
         if ([responseObject isKindOfClass:[SimiMutableDictionary class]]) {
             NSMutableDictionary *responseObjectData = [[SimiMutableDictionary alloc]initWithDictionary:(NSMutableDictionary*)responseObject];
             
             switch (modelActionType) {
                 case ModelActionTypeInsert:{
-                    [self addData:[responseObjectData valueForKey:@"invoice"]];
+                    [self addData:[responseObjectData valueForKey:@"order"]];
                 }
                     break;
                 default:{
-                    [self setData:[responseObjectData valueForKey:@"invoice"]];
+                    [self setData:[responseObjectData valueForKey:@"order"]];
                 }
                     break;
             }

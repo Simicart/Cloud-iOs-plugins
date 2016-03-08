@@ -81,15 +81,15 @@
 {
     SimiIpayModel *ipayCheckoutModel = [[SimiIpayModel alloc]init];
     [ipayCheckoutModel updateIpayOrderWithParams:params];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdatePayment:) name:@"DidUpdateIpayPayment" object:ipayCheckoutModel];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:@"DidUpdateIpayPayment" object:ipayCheckoutModel];
     [self startLoadingData];
 }
 
 - (void)cancelIpayCheckoutPayment: (NSMutableDictionary *) params
 {
     SimiIpayModel *ipayCheckoutModel = [[SimiIpayModel alloc]init];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:@"DidUpdateIpayPayment" object:ipayCheckoutModel];
     [ipayCheckoutModel updateIpayOrderWithParams:params];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didCancelPayment:) name:@"DidUpdateIpayPayment" object:ipayCheckoutModel];
     [self startLoadingData];
 }
 
@@ -97,16 +97,14 @@
 //    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"FAIL") message:SCLocalizedString(@"Your order has been canceled") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
 //    [alertView show];
     [self stopLoadingData];
-    [self.navigationController popToRootViewControllerAnimated:YES];
-    [self moveToThankyouPageWithNotification:noti];
+//    [self.navigationController popToRootViewControllerAnimated:YES];
+//    [self moveToThankyouPageWithNotification:noti];
     [self removeObserverForNotification:noti];
 }
 
 - (void)paymentSuccess:(NSString *)refNo withTransId:(NSString *)transId withAmount:(NSString *)amount withRemark:(NSString *)remark withAuthCode:(NSString *)authCode{
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:transId forKey:@"transaction_id"];
-    [params setValue:authCode forKey:@"auth_code"];
-    [params setValue:[order valueForKey:@"invoice_number"] forKey:@"ref_no"];
+    [params setValue:transId forKey:@"payment_id"];
     [params setValue:[order valueForKey:@"invoice_number"] forKey:@"order_id"];
     [params setValue:@"1" forKey:@"status"];
     [self updateIpayCheckoutPayment:params];
@@ -114,21 +112,17 @@
 
 - (void)paymentFailed:(NSString *)refNo withTransId:(NSString *)transId withAmount:(NSString *)amount withRemark:(NSString *)remark withErrDesc:(NSString *)errDesc{
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:transId forKey:@"transaction_id"];
-    [params setValue:errDesc forKey:@"auth_code"];
-    [params setValue:[order valueForKey:@"invoice_number"] forKey:@"ref_no"];
+    [params setValue:transId forKey:@"payment_id"];
     [params setValue:[order valueForKey:@"invoice_number"] forKey:@"order_id"];
-    [params setValue:@"2" forKey:@"status"];
+    [params setValue:@"0" forKey:@"status"];
     [self cancelIpayCheckoutPayment:params];
 }
 
 - (void)paymentCancelled:(NSString *)refNo withTransId:(NSString *)transId withAmount:(NSString *)amount withRemark:(NSString *)remark withErrDesc:(NSString *)errDesc{
     NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    [params setValue:transId forKey:@"transaction_id"];
-    [params setValue:errDesc forKey:@"auth_code"];
-    [params setValue:[order valueForKey:@"invoice_number"] forKey:@"ref_no"];
+    [params setValue:transId forKey:@"payment_id"];
     [params setValue:[order valueForKey:@"invoice_number"] forKey:@"order_id"];
-    [params setValue:@"2" forKey:@"status"];
+    [params setValue:@"0" forKey:@"status"];
     [self cancelIpayCheckoutPayment:params];
 }
 
