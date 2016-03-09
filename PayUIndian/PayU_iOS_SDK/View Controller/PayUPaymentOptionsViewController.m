@@ -90,10 +90,8 @@ typedef enum : NSUInteger {
     _preferredPaymentTable.delegate = self;
     _preferredPaymentTable.dataSource = self;
     _preferredPaymentTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-
     _activityIndicator.hidden = NO;
     [_activityIndicator startAnimating];
-    
     //setting up all required params and hash for future use in Singleton class.
     SharedDataManager *dataManager = [SharedDataManager sharedDataManager];
     dataManager.allInfoDict = [self createDictionaryWithAllParam];
@@ -140,6 +138,7 @@ typedef enum : NSUInteger {
         }else if(buttonIndex == 1){
            // post notification to worker
             [[NSNotificationCenter defaultCenter]postNotificationName:@"payUIndianCancelOrder" object:nil];
+            _activityIndicator.hidden = NO;
             [_activityIndicator startAnimating];
         }
     }
