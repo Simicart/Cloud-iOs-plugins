@@ -140,6 +140,7 @@ typedef enum : NSUInteger {
         }else if(buttonIndex == 1){
            // post notification to worker
             [[NSNotificationCenter defaultCenter]postNotificationName:@"payUIndianCancelOrder" object:nil];
+            [_activityIndicator startAnimating];
         }
     }
 }
