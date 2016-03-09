@@ -63,13 +63,27 @@ typedef enum : NSUInteger {
 
 @implementation PayUPaymentOptionsViewController
 
+-(void) configureNavigationBarOnViewWillAppear{
+    self.navigationItem.hidesBackButton = YES;
+    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
+    backButton.title = SCLocalizedString(@"Cancel");
+    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
+    [leftBarButtons addObjectsFromArray:@[backButton]];
+    self.navigationItem.leftBarButtonItems = leftBarButtons;
+}
+
+-(void) cancelPayment:(id) sender{
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Confirmation") message:SCLocalizedString(@"Are you sure that you want to cancel the order?") delegate:self cancelButtonTitle:SCLocalizedString(@"Cancel") otherButtonTitles:SCLocalizedString(@"OK"), nil];
+    [alertView show];
+    alertView.tag = 0;
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    [self configureNavigationBarOnViewWillAppear];
     self.navigationController.title = @"PayUBiz";
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:@"DidUpdatePayUIndianPaymentConfig" object:nil];
-
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
     _connectionSpecificDataObject = [[NSMutableData alloc] init];
     
     //setting up preferred Payment option tableView
@@ -112,6 +126,23 @@ typedef enum : NSUInteger {
 
 }
 
+- (void) didReceiveNotification:(NSNotification *)noti {
+    if ([noti.name isEqualToString:DidCancelOrder]) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"moveToThankYouPage" object:noti];
+    }
+}
+
+-(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView.tag == 0){
+        if(buttonIndex == 0){
+            
+        }else if(buttonIndex == 1){
+           // post notification to worker
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"payUIndianCancelOrder" object:nil];
+        }
+    }
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
