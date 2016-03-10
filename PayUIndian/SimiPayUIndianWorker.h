@@ -10,6 +10,8 @@
 #import "PayU_iOS_SDK.h"
 
 @interface SimiPayUIndianWorker : NSObject<UIAlertViewDelegate, UIPopoverControllerDelegate>
+
 @property (nonatomic, strong) NSDictionary *hashDict;
 @property (strong, nonatomic) UIPopoverController * popController;
+@property (strong, nonatomic) NSMutableDictionary *paymentData;
 @end

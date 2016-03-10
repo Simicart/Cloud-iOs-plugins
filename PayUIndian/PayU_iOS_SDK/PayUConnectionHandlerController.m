@@ -12,7 +12,7 @@
 #import "Utils.h"
 #import "Reachability.h"
 #import "ReachabilityManager.h"
-
+#import "SimiPayUIndianModel.h"
 #define PARAM_VAR1_DEFAULT    @"default"
 #define PG_TYPE               @"NB"
 #define BANK_CODE             @"bankcode"
@@ -175,8 +175,8 @@ void(^serverResponseForHashGenerationCallback)(NSURLResponse *response, NSData *
     theRequest.HTTPMethod = @"POST";
     NSString *command = nil;
     
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND]){
-        command = [[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND]){
+        command = [[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"KEY is not provided, this is one of required parameters." userInfo:nil];
@@ -574,7 +574,7 @@ void(^serverResponseForHashGenerationCallback)(NSURLResponse *response, NSData *
     
     NSMutableDictionary *allParamDict = [[NSMutableDictionary alloc] init];
     NSException *exeption = nil;
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_VAR1]){
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_VAR1]){
         _var1  = PARAM_VAR1_DEFAULT;
     }
     
@@ -591,15 +591,15 @@ void(^serverResponseForHashGenerationCallback)(NSURLResponse *response, NSData *
         [exeption raise];
     }
     
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY]){
-        [allParamDict setValue:[[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY] forKey:PARAM_KEY];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY]){
+        [allParamDict setValue:[[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY] forKey:PARAM_KEY];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"KEY is not provided, this is one of required parameters." userInfo:nil];
         [exeption raise];
     }
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND]){
-        _command = [[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND]){
+        _command = [[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND];
         //[allParamDict setValue:_command forKey:PARAM_COMMAND];
     }
     else{

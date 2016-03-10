@@ -10,7 +10,15 @@
 #import "SimiPayUIndianAPI.h"
 
 @implementation SimiPayUIndianModel
-
++ (id)sharedInstance{
+    static SimiPayUIndianModel *_sharedInstance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedInstance = [[SimiPayUIndianModel alloc] init];
+        _sharedInstance.paymentData = [NSMutableDictionary new];
+    });
+    return _sharedInstance;
+}
 -(void)getPaymentHash:(NSDictionary *)params {
     currentNotificationName = @"DidGetPayUIndianPaymentHashConfig";
     modelActionType = ModelActionTypeGet;

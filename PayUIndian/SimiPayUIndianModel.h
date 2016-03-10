@@ -9,6 +9,9 @@
 #import <SimiCartBundle/SimiCartBundle.h>
 
 @interface SimiPayUIndianModel : SimiModel
+@property (strong, nonatomic) NSMutableDictionary *paymentData;
+
++ (instancetype)sharedInstance;
 -(void)getPaymentHash:(NSDictionary *)params;
 -(void)updatePayment:(NSDictionary *)params;
 @end

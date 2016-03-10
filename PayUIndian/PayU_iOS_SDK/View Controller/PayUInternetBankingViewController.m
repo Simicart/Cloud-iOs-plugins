@@ -11,7 +11,7 @@
 #import "Utils.h"
 #import "PayUPaymentResultViewController.h"
 #import "SharedDataManager.h"
-
+#import "SimiPayUIndianModel.h"
 #define PG_TYPE @"NB"
 #define BANK_CODE @"bankcode"
 #define DOWN_TIME_MESSAGE @" Oops! %@ seems to be down. We recommend you to pay using any other means of payment."
@@ -386,8 +386,8 @@
     NSMutableDictionary *allParamDict = [[NSMutableDictionary alloc] init];
     NSException *exeption = nil;
     
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_VAR1]){
-        [allParamDict setValue:[[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_VAR1] forKey:PARAM_VAR1];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_VAR1]){
+        [allParamDict setValue:[[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_VAR1] forKey:PARAM_VAR1];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"VAR1 is not provided, this is one of required parameters." userInfo:nil];
@@ -403,15 +403,15 @@
         [exeption raise];
     }
     
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY]){
-        [allParamDict setValue:[[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY] forKey:PARAM_KEY];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY]){
+        [allParamDict setValue:[[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY] forKey:PARAM_KEY];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"KEY is not provided, this is one of required parameters." userInfo:nil];
         [exeption raise];
     }
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND]){
-        [allParamDict setValue:[[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND] forKey:PARAM_COMMAND];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND]){
+        [allParamDict setValue:[[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND] forKey:PARAM_COMMAND];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"COMMAND is not provided, this is one of required parameters." userInfo:nil];
@@ -448,8 +448,8 @@
     theRequest.HTTPMethod = @"POST";
     NSString *command = nil;
     
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND]){
-        command = [[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND]){
+        command = [[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"KEY is not provided, this is one of required parameters." userInfo:nil];

@@ -17,6 +17,7 @@
 #import "Utils.h"
 #import "PayUCashCardViewController.h"
 #import "PayUConnectionHandlerController.h"
+#import "SimiPayUIndianModel.h"
 
 #define CASH_CARD               @"cashcard"
 
@@ -63,35 +64,23 @@ typedef enum : NSUInteger {
 
 @implementation PayUPaymentOptionsViewController
 
--(void) configureNavigationBarOnViewWillAppear{
-    self.navigationItem.hidesBackButton = YES;
-    UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPayment:)];
-    backButton.title = SCLocalizedString(@"Cancel");
-    NSMutableArray* leftBarButtons = [NSMutableArray arrayWithArray:self.navigationController.navigationItem.leftBarButtonItems];
-    [leftBarButtons addObjectsFromArray:@[backButton]];
-    self.navigationItem.leftBarButtonItems = leftBarButtons;
-}
-
--(void) cancelPayment:(id) sender{
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Confirmation") message:SCLocalizedString(@"Are you sure that you want to cancel the order?") delegate:self cancelButtonTitle:SCLocalizedString(@"Cancel") otherButtonTitles:SCLocalizedString(@"OK"), nil];
-    [alertView show];
-    alertView.tag = 0;
-}
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self configureNavigationBarOnViewWillAppear];
+    
     self.navigationController.title = @"PayUBiz";
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:@"DidUpdatePayUIndianPaymentConfig" object:nil];
+
     _connectionSpecificDataObject = [[NSMutableData alloc] init];
     
     //setting up preferred Payment option tableView
     _preferredPaymentTable.delegate = self;
     _preferredPaymentTable.dataSource = self;
     _preferredPaymentTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
     _activityIndicator.hidden = NO;
     [_activityIndicator startAnimating];
+    
     //setting up all required params and hash for future use in Singleton class.
     SharedDataManager *dataManager = [SharedDataManager sharedDataManager];
     dataManager.allInfoDict = [self createDictionaryWithAllParam];
@@ -124,25 +113,6 @@ typedef enum : NSUInteger {
 
 }
 
-- (void) didReceiveNotification:(NSNotification *)noti {
-    if ([noti.name isEqualToString:DidCancelOrder]) {
-        [self.navigationController popToRootViewControllerAnimated:YES];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"moveToThankYouPage" object:noti];
-    }
-}
-
--(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(alertView.tag == 0){
-        if(buttonIndex == 0){
-            
-        }else if(buttonIndex == 1){
-           // post notification to worker
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"payUIndianCancelOrder" object:nil];
-            _activityIndicator.hidden = NO;
-            [_activityIndicator startAnimating];
-        }
-    }
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -347,7 +317,7 @@ typedef enum : NSUInteger {
     
     NSMutableDictionary *allParamDict = [[NSMutableDictionary alloc] init];
     NSException *exeption = nil;
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_VAR1]){
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_VAR1]){
         _var1  = PARAM_VAR1_DEFAULT;
     }
     
@@ -364,16 +334,17 @@ typedef enum : NSUInteger {
         [exeption raise];
     }
     
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY]){
-        _key = [[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY];
+    NSLog(@"%@",[SimiPayUIndianModel sharedInstance].paymentData);
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY]){
+        _key = [[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY];
         [allParamDict setValue:_key forKey:PARAM_KEY];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"KEY is not provided, this is one of required parameters." userInfo:nil];
         [exeption raise];
     }
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND]){
-        _command = [[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_COMMAND];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND]){
+        _command = [[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_COMMAND];
         //[allParamDict setValue:_command forKey:PARAM_COMMAND];
     }
     else{

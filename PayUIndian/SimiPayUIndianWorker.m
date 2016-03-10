@@ -17,7 +17,6 @@
     SimiOrderModel *order;
     SimiModel *payment;
     SimiPayUIndianModel *model;
-    NSDictionary *paymentData;
     NSDictionary *paymentHash;
     SimiViewController *viewController;
     NSString *txn_id;
@@ -29,12 +28,9 @@
 {
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"payUIndianCancelOrder" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"moveToThankYouPage" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUIndianPaymentHashConfig" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidUpdatePayUIndianPaymentConfig" object:nil];
         // add observer payu indian
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(success:) name:@"payment_success_notifications" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(failure:) name:@"payment_failure_notifications" object:nil];
@@ -44,40 +40,8 @@
     return self;
 }
 
--(void)moveToThankYouPage: (NSNotification *)noti {
-    viewController = [noti.userInfo valueForKey:@"controller"];
-    if (!viewController) {
-        UINavigationController *navi = (UINavigationController *)[(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication] delegate] window] rootViewController] selectedViewController];
-        viewController = [navi.viewControllers lastObject];
-    }
-    viewController.isDiscontinue = YES;
-    SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
-    UINavigationController *navi;
-    navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
-    thankYouPageViewController.order = order;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        _popController = [[UIPopoverController alloc] initWithContentViewController:navi];
-        [_popController dismissPopoverAnimated:YES];
-        thankYouPageViewController.popOver = _popController;
-        _popController.delegate = self;
-        navi.navigationBar.tintColor = THEME_COLOR;
-        if (SIMI_SYSTEM_IOS >= 8) {
-            navi.navigationBar.tintColor = THEME_APP_BACKGROUND_COLOR;
-        }
-        navi.navigationBar.barTintColor = THEME_COLOR;
-        [viewController.navigationController popToRootViewControllerAnimated:YES];
-        UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-        UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
-        [_popController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentViewController.view permittedArrowDirections:0 animated:YES];
-    } else {
-        [viewController.navigationController pushViewController:thankYouPageViewController animated:YES];
-    }
-}
-
 - (void)didReceiveNotification:(NSNotification *)noti{
-    if ([noti.name isEqualToString:@"DidUpdatePayUIndianPaymentConfig"]) {
-        [self moveToThankYouPage:noti];
-    } else if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
+     if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
         
     } else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]) {
         viewController = [noti.userInfo valueForKey:@"controller"];
@@ -108,18 +72,18 @@
             if (paymentHash != nil) {
                 self.hashDict = paymentHash;
             }
-            if (paymentData != nil) {
-                paymentData = nil;
+            if (self.paymentData != nil) {
+                self.paymentData = nil;
             }
-            paymentData = [model valueForKey:@"data"];
-            txn_id = [paymentData objectForKey:@"txnid"];
+            self.paymentData = [[NSMutableDictionary alloc]initWithDictionary:[model valueForKey:@"data"]];
+            
+            [[SimiPayUIndianModel sharedInstance].paymentData setValue:[NSString stringWithFormat:@"%@",[self.paymentData valueForKey:@"key"]] forKey:@"key"];
+            [[SimiPayUIndianModel sharedInstance].paymentData setValue:@"payment_related_details_for_mobile_sdk" forKey:@"command"];
+            [[SimiPayUIndianModel sharedInstance].paymentData setValue:@"default"forKey:@"var1"];
+            
+            txn_id = [self.paymentData objectForKey:@"txnid"];
             [self didPlaceOrder:noti];
         }
-    } else if ([noti.name isEqualToString:@"payUIndianCancelOrder"]) {
-        [order cancelAnOrder:[order valueForKey:@"_id"]];
-    } else if ([noti.name isEqualToString:@"moveToThankYouPage"]) {
-        // move to thankyou page
-        [self moveToThankYouPage:noti];
     }
 }
 
@@ -131,28 +95,25 @@
     }
     viewController.isDiscontinue = YES;
         PayUPaymentOptionsViewController *paymentOptionsVC = nil;
-//        if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-//        {
-            CGSize result = [[UIScreen mainScreen] bounds].size;
-            if(result.height == 480)
-            {
-                paymentOptionsVC = [[PayUPaymentOptionsViewController alloc] initWithNibName:@"AllPaymentOprionsView" bundle:nil];
-            }
-            else
-            {
-                paymentOptionsVC = [[PayUPaymentOptionsViewController alloc] initWithNibName:@"PayUPaymentOptionsViewController" bundle:nil];
-            }
-//        }
+        CGSize result = [[UIScreen mainScreen] bounds].size;
+        if(result.height == 480)
+        {
+            paymentOptionsVC = [[PayUPaymentOptionsViewController alloc] initWithNibName:@"AllPaymentOprionsView" bundle:nil];
+        }
+        else
+        {
+            paymentOptionsVC = [[PayUPaymentOptionsViewController alloc] initWithNibName:@"PayUPaymentOptionsViewController" bundle:nil];
+        }
         //Pass the parameters in paramDict in Key-Value pair as mentioned
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                      [paymentData objectForKey:@"productinfo"],@"productinfo",
-                                      [paymentData objectForKey:@"firstname"],@"firstname",
-                                      [paymentData objectForKey:@"amount"],@"amount",
-                                      [paymentData objectForKey:@"email"],@"email",
+                                      [self.paymentData objectForKey:@"productinfo"],@"productinfo",
+                                      [self.paymentData objectForKey:@"firstname"],@"firstname",
+                                      [self.paymentData objectForKey:@"amount"],@"amount",
+                                      [self.paymentData objectForKey:@"email"],@"email",
                                       @"", @"phone",
-                                      [paymentData objectForKey:@"surl"],@"surl",
-                                      [paymentData objectForKey:@"furl"],@"furl",
-                                      [paymentData objectForKey:@
+                                      [self.paymentData objectForKey:@"surl"],@"surl",
+                                      [self.paymentData objectForKey:@"furl"],@"furl",
+                                      [self.paymentData objectForKey:@
                                        "txnid"],@"txnid",
                                       @"ra:ra",@"user_credentials",
                                       @"",@"offer_key",
@@ -165,13 +126,13 @@
     NSLog(@"param : %@", paramDict);
         paymentOptionsVC.parameterDict = paramDict;
         paymentOptionsVC.callBackDelegate = self;
-        paymentOptionsVC.totalAmount  = [[paymentData objectForKey:@"amount"] floatValue];
+        paymentOptionsVC.totalAmount  = [[self.paymentData objectForKey:@"amount"] floatValue];
         paymentOptionsVC.appTitle     = @"PayU test App";
         if(_hashDict)
             paymentOptionsVC.allHashDict = _hashDict;
         _hashDict = nil;
     viewController.isDiscontinue = YES;
-//    paymentOptionsVC.order = order;
+    paymentOptionsVC.order = order;
     [viewController.navigationController pushViewController:paymentOptionsVC animated:YES];
 
 }
@@ -240,4 +201,8 @@
     [model updatePayment:updatePaymentParam];
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 @end

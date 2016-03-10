@@ -12,6 +12,7 @@
 #import "SharedDataManager.h"
 #import "Utils.h"
 #import "PayUPaymentResultViewController.h"
+#import "SimiPayUIndianModel.h"
 
 
 #define DEBIT_CARD   @"Enter your card details"
@@ -850,8 +851,8 @@
         [exeption raise];
     }
     
-    if([[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY]){
-        [allParamDict setValue:[[NSBundle mainBundle] objectForInfoDictionaryKey:PARAM_KEY] forKey:PARAM_KEY];
+    if([[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY]){
+        [allParamDict setValue:[[SimiPayUIndianModel sharedInstance].paymentData valueForKey:PARAM_KEY] forKey:PARAM_KEY];
     }
     else{
         exeption = [[NSException alloc] initWithName:@"Required Param missing" reason:@"KEY is not provided, this is one of required parameters." userInfo:nil];

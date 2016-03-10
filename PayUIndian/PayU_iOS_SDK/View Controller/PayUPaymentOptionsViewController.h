@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <SimiCartBundle/SimiOrderModel.h>
+#import <SimiCartBundle/SCPaymentViewController.h>
 
-@interface PayUPaymentOptionsViewController : UIViewController<UIAlertViewDelegate>
+@interface PayUPaymentOptionsViewController : SCPaymentViewController
 
 @property (nonatomic, copy) NSString *command;
 @property (nonatomic, copy) NSString *var1;
