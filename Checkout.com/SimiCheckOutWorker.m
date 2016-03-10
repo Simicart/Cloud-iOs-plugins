@@ -20,6 +20,7 @@
     SimiOrderModel *order;
     SimiCheckOutModel *model;
     NSString *publishKey;
+    NSString *isSandBox;
     SCPaymentViewController *paymentVC;
 }
 
@@ -43,6 +44,7 @@
             [alertView show];
         } else {
             publishKey = [model valueForKey:@"public_key"];
+            isSandBox = [model valueForKey:@"is_sandbox"];
         }
     }
     else {
@@ -74,6 +76,7 @@
         checkoutViewController.publishKey = publishKey;
         checkoutViewController.simiCheckOutModel = model;
         checkoutViewController.order = orderData;
+        checkoutViewController.isSandBox = isSandBox;
         viewController.isDiscontinue = YES;
         [viewController.navigationController pushViewController:checkoutViewController animated:YES];
     } else {

@@ -107,11 +107,16 @@ public class CheckoutKit {
     
     */
     
-    public class func getInstance(pk: String) throws -> CheckoutKit {
+    public class func getInstance(pk: String, isSandBox: Bool) throws -> CheckoutKit {
         var error: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         if (ck == nil) {
             do {
-                ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: true, logger: Log.getLog())
+                if isSandBox {
+                    ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: true, logger: Log.getLog())
+                } else {
+                    ck = try CheckoutKit(pk: pk, env: Environment.LIVE, debug: true, logger: Log.getLog())
+                }
+                
             } catch let error1 as NSError {
                 error = error1
                 ck = nil
@@ -159,11 +164,16 @@ public class CheckoutKit {
     
     */
     
-    public class func getInstance(pk: String, debug: Bool, logger: Log) throws -> CheckoutKit {
+    public class func getInstance(pk: String, debug: Bool, logger: Log, isSandBox : Bool) throws -> CheckoutKit {
         var error: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         if (ck == nil) {
             do {
-                ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: debug, logger: logger)
+                if isSandBox {
+                    ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: debug, logger: logger)
+                } else {
+                    ck = try CheckoutKit(pk: pk, env: Environment.LIVE, debug: debug, logger: logger)
+                }
+                
             } catch let error1 as NSError {
                 error = error1
                 ck = nil
@@ -275,11 +285,16 @@ public class CheckoutKit {
     
     */
     
-    public class func getInstance(pk: String, logger: Log) throws -> CheckoutKit {
+    public class func getInstance(pk: String, logger: Log, isSandBox : Bool) throws -> CheckoutKit {
         var error: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         if (ck == nil) {
             do {
-                ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: true, logger: logger)
+                if isSandBox {
+                    ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: true, logger: logger)
+                } else {
+                    ck = try CheckoutKit(pk: pk, env: Environment.LIVE, debug: true, logger: logger)
+                }
+                
             } catch let error1 as NSError {
                 error = error1
                 ck = nil
@@ -303,11 +318,16 @@ public class CheckoutKit {
     
     */
     
-    public class func getInstance(pk: String, debug: Bool) throws -> CheckoutKit {
+    public class func getInstance(pk: String, debug: Bool, isSandBox : Bool) throws -> CheckoutKit {
         var error: NSError! = NSError(domain: "Migrator", code: 0, userInfo: nil)
         if (ck == nil) {
             do {
-                ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: debug, logger: Log.getLog())
+                if isSandBox {
+                    ck = try CheckoutKit(pk: pk, env: Environment.SANDBOX, debug: debug, logger: Log.getLog())
+                } else {
+                    ck = try CheckoutKit(pk: pk, env: Environment.LIVE, debug: debug, logger: Log.getLog())
+                }
+                
             } catch let error1 as NSError {
                 error = error1
                 ck = nil

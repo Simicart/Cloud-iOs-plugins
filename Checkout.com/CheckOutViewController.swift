@@ -33,6 +33,7 @@ class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPi
     var year = "2015"
     let errorColor = UIColor(red: 204.0/255.0, green: 112.0/255.0, blue: 115.0/255.0, alpha: 0.3)
     var publishKey : NSString!
+    var isSandBox : NSString!
     var orderData : SimiOrderModel!
     // UIField
     var doneButton = UIButton()
@@ -298,7 +299,13 @@ class CheckOutViewController: SCPaymentViewController, UITextFieldDelegate, UIPi
         self.startLoadingData()
         self.cardTokenButton.enabled = false
         self.edittingTf.resignFirstResponder()
-        let ck = try? CheckoutKit.getInstance(publishKey as String)
+        var environment : Bool
+        if isSandBox == "1" {
+            environment = true
+        } else {
+            environment = false
+        }
+        let ck = try? CheckoutKit.getInstance(publishKey as String, isSandBox: environment)
         if ck == nil {
             self.cardTokenButton.enabled = true
             // alert error
