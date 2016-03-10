@@ -75,7 +75,11 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     [self stopLoadingData];
     NSString *string = webView.request.URL.absoluteString;
+    
     if ([string rangeOfString:redirectUrl].location != NSNotFound) {
+        html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
+        [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(updatePayment) userInfo:nil repeats:NO];
+    }else if([string rangeOfString:@"https://secure.ccavenue.com/transaction/initTrans"].location != NSNotFound){
         html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
         [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(updatePayment) userInfo:nil repeats:NO];
     }

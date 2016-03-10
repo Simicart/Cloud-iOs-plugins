@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "KlarnaViewController.h"
+#import "KlarnaModel.h"
+
 @interface KlarnaWorker : NSObject
 
 @end

@@ -51,14 +51,14 @@ NSString* const BRAINTREEGETTOKEN = @"BRAINTREE-GETTOKEN";
                     if([currentNotificationName isEqualToString:BRAINTREEGETSETTING] || [currentNotificationName isEqualToString:BRAINTREEGETTOKEN])
                         [self addData:responseObjectData];
                     else if([currentNotificationName isEqualToString:BRAINTREESENDNONCETOSERVER])
-                            [self addData:[responseObjectData valueForKey:@"invoice"]];
+                            [self addData:[responseObjectData valueForKey:@"order"]];
                 }
                     break;
                 default:{
                     if([currentNotificationName isEqualToString:BRAINTREEGETSETTING] || [currentNotificationName isEqualToString:BRAINTREEGETTOKEN])
                         [self setData:responseObjectData];
                     else if([currentNotificationName isEqualToString:BRAINTREESENDNONCETOSERVER])
-                        [self setData:[responseObjectData valueForKey:@"invoice"]];
+                        [self setData:[responseObjectData valueForKey:@"order"]];
                 }
                     break;
             }
