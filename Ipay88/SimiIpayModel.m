@@ -53,11 +53,20 @@
             
             switch (modelActionType) {
                 case ModelActionTypeInsert:{
-                    [self addData:[responseObjectData valueForKey:@"order"]];
+                    if ([responseObjectData objectForKey:@"invoice"] != nil) {
+                        [self addData:[responseObjectData valueForKey:@"invoice"]];
+                    } else {
+                        [self addData:[responseObjectData valueForKey:@"order"]];
+                    }
+                    
                 }
                     break;
                 default:{
-                    [self setData:[responseObjectData valueForKey:@"order"]];
+                    if ([responseObjectData objectForKey:@"invoice"] != nil) {
+                        [self setData:[responseObjectData valueForKey:@"invoice"]];
+                    } else {
+                        [self setData:[responseObjectData valueForKey:@"order"]];
+                    }
                 }
                     break;
             }

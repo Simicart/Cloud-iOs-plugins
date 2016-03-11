@@ -10,6 +10,7 @@
 #import "SimiIpayAPI.h"
 #import "SimiIpayModel.h"
 #import <SimiCartBundle/SimiOrderModel.h>
+#import <SimiCartBundle/SCOrderViewController.h>
 #import "SimiIpayViewController.h"
 #import <SimiCartBundle/SCAppDelegate.h>
 
@@ -22,7 +23,7 @@
     NSString *payPalAppKey;
     NSString *payPalReceiverEmail;
     NSString *bnCode;
-    SimiViewController *viewController;
+    SCOrderViewController *orderViewController;
     SimiIpayModel *order;
 }
 
@@ -45,6 +46,8 @@
     } else if ([noti.name isEqualToString:@"DidSelectPaymentMethod"]) {
 
     } else if ([noti.name isEqualToString:@"DidPlaceOrder-After"]) {
+        orderViewController = [noti.userInfo valueForKey:@"controller"];
+        orderViewController.isDiscontinue = YES;
         payment = [noti.userInfo valueForKey:@"payment"];
         orderInfo = noti.object;
         if ([[payment valueForKey:@"method_code"] isEqualToString:METHOD_IPAY]) {
@@ -67,7 +70,6 @@
 - (void)didPlaceOrder:(NSNotification *)noti
 {
     UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
-//    order = [noti.userInfo objectForKey:@"data"];
     if(order != nil && payment != nil){
         SimiIpayViewController *nextController = [[SimiIpayViewController alloc] init];
         nextController.title =  SCLocalizedString(@"Ipay88");
