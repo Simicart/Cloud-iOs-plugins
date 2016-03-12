@@ -29,7 +29,6 @@
     _webView = [[UIWebView alloc] initWithFrame:CGRectInset(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height), 0, 0)];
     [self.view addSubview:_webView];
     _webView.delegate = self;
-//    [self startLoadingData];
     NSLog(@"order detail : %@", self.order);
     NSDictionary *param = @{
                                 @"order_id" : [self.order valueForKey:@"_id"],
@@ -40,7 +39,9 @@
     }
     [model getDirectLink:param];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUDirectLinkConfig" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidGetOrder object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:@"moveToThankYouPage" object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:DidCancelOrder object:nil];
 }
 
 - (void)didReceiveNotification:(NSNotification *)noti{
@@ -48,12 +49,14 @@
     if ([noti.name isEqualToString:@"DidGetPayUDirectLinkConfig"]) {
         SimiResponder *responder = [noti.userInfo valueForKey:@"responder"];
         if (![responder.status isEqualToString: @"SUCCESS"]) {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:[NSString stringWithFormat:@"%@, Please try again", responder.message] delegate:self cancelButtonTitle:nil otherButtonTitles: @"OK", nil];
+            [alertView show];
+            alertView.tag = 0;
             [alertView show];
         } else {
             if ([model valueForKey:@"errors"] != nil) {
 //                NSDictionary *errors = [model valueForKey:@"errors"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:@"Sorry, currentcy is not supported. Please choose another payment." delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Error") message:@"Sorry, currentcy is not supported. Please choose another payment." delegate:self cancelButtonTitle:nil otherButtonTitles: @"OK", nil];
                 alertView.tag = 1;
                 [alertView show];
             } else {
@@ -63,40 +66,7 @@
                 [_webView loadRequest:request];
             }
         }
-    }
-}
-
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == 1) {
-        if(buttonIndex == alertView.cancelButtonIndex) {
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:DidCancelOrder object:nil];
-            [self startLoadingData];
-            if(self.order)
-                [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
-            else{
-                [self.navigationController popToRootViewControllerAnimated:YES];
-                UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Thank you") message:SCLocalizedString(@"Your order is cancelled.") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        }
-    }
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-//    self.edgesForExtendedLayout = UIRectEdgeBottom;
-//    _webView = [[UIWebView alloc] initWithFrame:CGRectInset(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height), 0, 0)];
-//    [self.view addSubview:_webView];
-//    _webView.delegate = self;
-}
-
-#pragma mark UIWebView Delegate
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
-{
-    NSString *stringRequest = [NSString stringWithFormat:@"%@",request];
-    if ([stringRequest containsString:@"sessionId"]) {
-    }
-    if ([stringRequest containsString:@"return"]) {
+    } else if ([noti.name isEqualToString:DidGetOrder]) {
         SCThankYouPageViewController *thankYouPageViewController = [[SCThankYouPageViewController alloc] init];
         UINavigationController *navi;
         navi = [[UINavigationController alloc]initWithRootViewController:thankYouPageViewController];
@@ -118,6 +88,26 @@
         } else {
             [self.navigationController pushViewController:thankYouPageViewController animated:YES];
         }
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+//    self.edgesForExtendedLayout = UIRectEdgeBottom;
+//    _webView = [[UIWebView alloc] initWithFrame:CGRectInset(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height), 0, 0)];
+//    [self.view addSubview:_webView];
+//    _webView.delegate = self;
+}
+
+#pragma mark UIWebView Delegate
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    NSString *stringRequest = [NSString stringWithFormat:@"%@",request];
+    if ([stringRequest containsString:@"sessionId"]) {
+    }
+    if ([stringRequest containsString:@"return"]) {
+        // call to get info of order before popToThankYouPage.
+        [self.order getOrderWithId:[self.order valueForKey:@"_id"]];
 
     } else if ([stringRequest containsString:@"simipayu/index/failure"])
     {
