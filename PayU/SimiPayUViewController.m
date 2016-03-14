@@ -132,6 +132,25 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [super alertView:alertView clickedButtonAtIndex:buttonIndex];
+    if (alertView.tag == 1) {
+        if (buttonIndex == alertView.cancelButtonIndex) {
+            
+        } else {
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveToThankyouPageWithNotification:) name:DidCancelOrder object:nil];
+            [self startLoadingData];
+            if(self.order)
+                [self.order cancelAnOrder:[self.order valueForKey:@"_id"]];
+            else{
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Thank you") message:SCLocalizedString(@"Your order is cancelled.") delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        }
+    }
+}
+
 /*
 #pragma mark - Navigation
 

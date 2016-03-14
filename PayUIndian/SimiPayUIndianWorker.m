@@ -29,7 +29,6 @@
     self = [super init];
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidPlaceOrder-After" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidSelectPaymentMethod" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:@"DidGetPayUIndianPaymentHashConfig" object:nil];
         // add observer payu indian
@@ -86,6 +85,7 @@
             [self didPlaceOrder:noti];
         }
     } else if ([noti.name isEqualToString:DidCancelOrder]) {
+        [[NSNotificationCenter defaultCenter] removeObserverForNotification:noti];
         if ([[[payment valueForKey:@"method_code"] uppercaseString] isEqualToString:@"PAYUBIZ"]) {
             UIViewController *currentVC = [(UITabBarController *)[[(SCAppDelegate *)[[UIApplication sharedApplication]delegate] window] rootViewController] selectedViewController];
             UIViewController *currentViewController = [[(UINavigationController *)currentVC viewControllers] lastObject];
@@ -190,6 +190,7 @@
 }
 - (void) cancel:(NSDictionary *)info{
     [viewController.navigationController popToRootViewControllerAnimated:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveNotification:) name:DidCancelOrder object:order];
     [order cancelAnOrder:[order valueForKey:@"_id"]];
 }
 -(void)dataReceived:(NSNotification *)noti
