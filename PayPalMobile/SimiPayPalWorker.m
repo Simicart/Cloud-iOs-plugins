@@ -136,25 +136,26 @@
     order = noti.object;
     [viewController stopLoadingData];
     UIAlertView *alertView;
-    if([[order valueForKey:@"status"] isEqualToString:@"errors"]){
-        alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Sorry!") message:@"Have some errors, please try again." delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
-        [alertView show];
-    }
-    else{
-        //delete current quote
-        [[SimiGlobalVar sharedInstance] setQuoteId:nil];
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        if ([userDefaults valueForKey:@"quoteId"]) {
-            [userDefaults setValue:@"" forKey:@"quoteId"];
-            [userDefaults synchronize];
+    if([[responder.status uppercaseString] isEqualToString:@"SUCCESS"]){
+        if([order objectForKey:@"errors"]){
+            alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(@"Sorry") message:@"Have some errors, please try again." delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles: nil];
+            [alertView show];
         }
-        
-        if (SIMI_SYSTEM_IOS >= 8) {
-            [viewController.navigationController popToRootViewControllerAnimated:YES];
-        }else
-        {
-            [viewController.navigationController popToRootViewControllerAnimated:NO];
-        }
+        else{
+            //delete current quote
+            [[SimiGlobalVar sharedInstance] setQuoteId:nil];
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            if ([userDefaults valueForKey:@"quoteId"]) {
+                [userDefaults setValue:@"" forKey:@"quoteId"];
+                [userDefaults synchronize];
+            }
+            
+            if (SIMI_SYSTEM_IOS >= 8) {
+                [viewController.navigationController popToRootViewControllerAnimated:YES];
+            }else
+            {
+                [viewController.navigationController popToRootViewControllerAnimated:NO];
+            }
             SCThankYouPageViewController *thankVC = [[SCThankYouPageViewController alloc] init];
             thankVC.number = [order valueForKey:@"seq_no"];
             thankVC.order = order;
@@ -172,6 +173,10 @@
                 thankVC.popOver = popThankController;
                 [popThankController presentPopoverFromRect:CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 1, 1) inView:currentVC.view permittedArrowDirections:0 animated:YES];
             }
+        }
+    }else{
+        alertView = [[UIAlertView alloc] initWithTitle:SCLocalizedString(responder.status) message:SCLocalizedString(responder.message) delegate:nil cancelButtonTitle:SCLocalizedString(@"OK") otherButtonTitles:nil, nil];
+        [alertView show];
     }
     [self removeObserverForNotification:noti];
 }
