@@ -45,7 +45,7 @@
 
 -(void) completePayment{
     [self.navigationController popToRootViewControllerAnimated:YES];
-    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Thank you!" message:@"Your order is completed" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
+    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"" message:SCLocalizedString(@"Thank you for your purchase")delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil, nil];
     [alertView show];
 
 }
@@ -55,7 +55,6 @@
     
     [self stopLoadingData];
     NSString* requestURL = [NSString stringWithFormat:@"%@",webView.request.URL.absoluteString];
-    
     if([requestURL rangeOfString:@"klarna/confirmation?klarna_order_id"].location != NSNotFound){
         if(!isShowedAlert){
         [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(completePayment) userInfo:nil repeats:NO];
