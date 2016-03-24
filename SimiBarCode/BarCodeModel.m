@@ -14,7 +14,7 @@
     currentNotificationName = DidGetProductIdWithBarCode;
     modelActionType = ModelActionTypeGet;
     NSString* url = [NSString stringWithFormat:@"%@products",kBaseURL];
-    [[SimiAPI new] requestWithMethod:GET URL:url params:@{@"filter[barcode]":barCode} target:self selector:@selector(didFinishRequest:responder:) header:nil];
+    [[SimiAPI new] requestWithMethod:GET URL:url params:@{@"filter[or][barcode]":barCode,@"filter[or][qrcode]":barCode} target:self selector:@selector(didFinishRequest:responder:) header:nil];
 }
 
 - (void)didFinishRequest:(NSObject *)responseObject responder:(SimiResponder *)responder{
