@@ -131,6 +131,7 @@
                      if(customer == nil)
                          customer = [SimiCustomerModel new];
                      if(email && name){
+                         [[NSNotificationCenter defaultCenter] addObserver:viewController selector:@selector(didLogin:) name:DidLogin object:nil];
                          [customer loginWithFacebookEmail:email name:name];
                          [[NSNotificationCenter defaultCenter] postNotificationName:@"SimiFaceBookWorker_StartLoginWithFaceBook" object:nil];
                          [viewController startLoadingData];

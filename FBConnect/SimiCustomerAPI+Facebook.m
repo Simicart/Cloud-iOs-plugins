@@ -16,6 +16,4 @@
     [self requestWithMethod:POST URL:url params:params target:target selector:selector header:nil];
 }
 
-
-
 @end
