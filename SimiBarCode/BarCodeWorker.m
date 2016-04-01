@@ -47,7 +47,7 @@
             if ([section.identifier isEqualToString:LEFTMENU_SECTION_MORE]) {
                 SimiRow *row = [[SimiRow alloc]initWithIdentifier:LEFTMENU_ROW_BARCODE height:50 sortOrder:60];
                 row.image = [UIImage imageNamed:@"barcode_icon"];
-                row.title = SCLocalizedString(@"QR Barcode");
+                row.title = SCLocalizedString(@"Scan now");
                 row.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                 [section addObject:row];
                 [section sortItems];

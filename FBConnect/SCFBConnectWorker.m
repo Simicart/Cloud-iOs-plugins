@@ -39,12 +39,15 @@
 {
     
     if ([noti.name isEqualToString:@"SCProductViewMoreController-ViewDidLoadBefore"]) {
+        //  Disable Facebook Like, Share, Comment for Cloud Version
+        /*
         FacebookConnect *facebookConnect = [[FacebookConnect alloc]initWithObject:noti.object];
         facebookConnect.productMoreVC = noti.object;
         if (self.arrayFacebookConnect == nil) {
             self.arrayFacebookConnect = [[NSMutableArray array]init];
         }
         [self.arrayFacebookConnect addObject:facebookConnect];
+         */
     }else if ([noti.name isEqualToString:@"SCLoginViewController_InitCellsAfter"]) {
         cells = noti.object;
         viewController = (SimiViewController*)[noti.userInfo valueForKey:@"controller"];
@@ -76,10 +79,6 @@
             
             loginButton.delegate = self;
             loginButton.frame = CGRectMake(paddingX, paddingY , widthCell, heightCell);
-//            FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
-//            [loginManager logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-//                //TODO: process error or result
-//            }];
             cell.backgroundColor = [UIColor clearColor];
             [cell addSubview:loginButton];
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
@@ -131,19 +130,12 @@
                      NSString *name = SCLocalizedString([result objectForKey:@"name"]);
                      if(customer == nil)
                          customer = [SimiCustomerModel new];
-//                     NSDictionary *info = [[NSBundle mainBundle] infoDictionary];
-//                     NSString *bundleIdentifier = [NSString stringWithFormat:@"%@", [info objectForKey:@"CFBundleIdentifier"]];
-//                     KeychainItemWrapper *wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:bundleIdentifier accessGroup:nil];
-//                     [wrapper setObject:name forKey:(__bridge id)(kSecAttrComment)];
-//                     [wrapper setObject:@"loginwithfacebook" forKey:(__bridge id)(kSecAttrLabel)];
-                     
                      if(email && name){
-                     [customer loginWithFacebookEmail:email name:name];
-                     [[NSNotificationCenter defaultCenter] postNotificationName:@"SimiFaceBookWorker_StartLoginWithFaceBook" object:nil];
+                         [customer loginWithFacebookEmail:email name:name];
+                         [[NSNotificationCenter defaultCenter] postNotificationName:@"SimiFaceBookWorker_StartLoginWithFaceBook" object:nil];
                          [viewController startLoadingData];
                      }
                  }
-                 
              }
          }];
     }
