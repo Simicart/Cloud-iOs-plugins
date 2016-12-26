@@ -1,0 +1,17 @@
+//
+//  MSApplication.h
+//  RetailerPOS
+//
+//  Created by Nguyen Duc Chien on 1/2016/14.
+//  Copyright (c) 2014 David Nguyen. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface MSApplication : UIApplication {
+    NSTimer *_watchDogTimer;
+}
+
+- (void)resetWatchDogTimer;
+
+@end

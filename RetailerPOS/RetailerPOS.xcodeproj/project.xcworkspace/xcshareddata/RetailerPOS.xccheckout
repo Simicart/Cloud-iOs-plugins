@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>B5F80D44-B336-4768-8177-3998FAC7AE8F</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SimiPOS</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>fd75085b-85c5-4076-82dc-eae82588d9a6++8277</key>
+		<string>svn://giaytot.com/MT03/SimiPOS/iPad</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SimiPOS.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>fd75085b-85c5-4076-82dc-eae82588d9a6++8277</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>fd75085b-85c5-4076-82dc-eae82588d9a6++8277</key>
+		<string>svn://giaytot.com</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>svn://giaytot.com/MT03/SimiPOS/iPad/SimiPOS.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>fd75085b-85c5-4076-82dc-eae82588d9a6++8277</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>fd75085b-85c5-4076-82dc-eae82588d9a6++8277</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SimiPOS</string>
+		</dict>
+	</array>
+</dict>
+</plist>
