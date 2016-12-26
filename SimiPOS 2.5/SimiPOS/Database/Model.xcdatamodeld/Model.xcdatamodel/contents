@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15C50" minimumToolsVersion="Xcode 7.0">
+    <entity name="CashDrawer" representedClassName="CashDrawer" syncable="YES">
+        <attribute name="cash_drawer_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cash_drawer_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="save_automatic" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CustomerInfo" representedClassName="CustomerInfo" syncable="YES">
+        <attribute name="customer_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="customer_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="group_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="telephone" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Denomination" representedClassName="Denomination" syncable="YES">
+        <attribute name="deno_id" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="deno_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="deno_value" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Permission" representedClassName="Permission" syncable="YES">
+        <attribute name="all_cart_discount" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="all_reports" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="cart_coupon" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="cart_custom_discount" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="eod_report" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="items_custom_price" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="items_discount" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="manage_cash_drawer" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="manage_order" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="manage_order_refund" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="maximum_discount_percent" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="sales_report" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="x_report" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="z_report" optional="YES" attributeType="Boolean" syncable="YES"/>
+    </entity>
+    <entity name="Stores" representedClassName="Stores" syncable="YES">
+        <attribute name="enable_cash_drawer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="store_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="store_name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="UrlDomainConfig" representedClassName="UrlDomainConfig" syncable="YES">
+        <attribute name="api_key" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dev_api_url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="domain_active" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="domain_dev" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="domain_live" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="main_api_url" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="UserInfo" representedClassName="UserInfo" syncable="YES">
+        <attribute name="cash_drawer_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="display_name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email_address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="enable_cash_drawer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="session" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="store_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="user_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CashDrawer" positionX="124" positionY="-216" width="128" height="90"/>
+        <element name="CustomerInfo" positionX="126" positionY="-108" width="128" height="118"/>
+        <element name="Denomination" positionX="70" positionY="-18" width="128" height="90"/>
+        <element name="Permission" positionX="126" positionY="-99" width="128" height="255"/>
+        <element name="Stores" positionX="-29" positionY="-216" width="128" height="90"/>
+        <element name="UrlDomainConfig" positionX="126" positionY="-99" width="128" height="135"/>
+        <element name="UserInfo" positionX="286" positionY="-225" width="128" height="180"/>
+    </elements>
+</model>

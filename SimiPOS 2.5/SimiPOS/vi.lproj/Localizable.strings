@@ -1,0 +1,21 @@
+/* 
+  Localizable.strings
+  SimiPOS
+
+  Created by Nguyen Dac Doan on 2/19/14.
+  Copyright (c) 2014 David Nguyen. All rights reserved.
+*/
+"Grand Total" = "Tổng tiền";
+
+"Total Paid" = "Tiền khách trả";
+"Total Refunded" = "Tiền trả lại";
+
+"Invoice # %@" = "Hóa đơn # %@";
+"Order # %@" = "Đơn hàng # %@";
+
+"Subtotal" = "Tổng tiền hàng";
+"Discount" = "Giảm giá";
+"Tax" = "Thuế";
+
+"Customer Name: " = "Tên khách hàng: ";
+"Phone / Email: " = "Điện thoại / Email: ";

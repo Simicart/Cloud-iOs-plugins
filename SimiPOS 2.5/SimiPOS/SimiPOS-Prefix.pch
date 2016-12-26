@@ -1,0 +1,83 @@
+//
+// Prefix header for all source files of the 'SimiPOS' target in the 'SimiPOS' project
+//
+
+#import <Availability.h>
+
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "Utilities.h"
+#import "APIManager.h"
+#import "UIColor+SimiPOS.h"
+#import "Permission.h"
+#import "Message.h"
+
+#define API_URL_NAME @"magestore_api_url"
+
+#define SYSTEM_VERSION                              ([[UIDevice currentDevice] systemVersion])
+
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([SYSTEM_VERSION compare:v options:NSNumericSearch] != NSOrderedAscending)
+
+#define MyAppDelegate ((AppDelegate *)([UIApplication sharedApplication].delegate))
+
+#define BoolValue(key)              [[NSUserDefaults standardUserDefaults] boolForKey:key]
+#define SetBoolValue(value, key)    [[NSUserDefaults standardUserDefaults] setBool:value forKey:key]
+
+#define UserValue(key)              [[NSUserDefaults standardUserDefaults] valueForKey:key]
+#define SetValueUser(value, key)    [[NSUserDefaults standardUserDefaults] setValue:value forKey:key]
+
+#define GetStringValue(key)         [[NSUserDefaults standardUserDefaults] stringForKey:key]
+#define SetStringValue(vlue, key)   [[NSUserDefaults standardUserDefaults] setValue:vlue forKey:key]
+
+#define SAVE_DATABASE               [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait]
+#define SAVE_USER_DEFAULT           [[NSUserDefaults standardUserDefaults] synchronize]
+
+
+#define WINDOW_HEIGHT [UIScreen mainScreen].applicationFrame.size.height
+#define WINDOW_WIDTH [UIScreen mainScreen].applicationFrame.size.width
+
+//config database
+//Import MagicalRecord Sources
+#define MR_SHORTHAND
+#define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
+#import "CoreData+MagicalRecord.h"
+
+//show menu
+#import "PPRevealSideViewController.h"
+#define  kMENU_OFFSET 320
+#define NOTIFY_SHOW_LEFT_SIDE_BAR_MENU @"NOTIFY_SHOW_LEFT_SIDE_BAR_MENU"
+#define NOTIFY_LOGOUT @"NOTIFY_LOGOUT"
+#define NOTIFY_ADD_NEW_CUSTOMER @"NOTIFY_ADD_NEW_CUSTOMER"
+
+//UserDefault Data
+#define KEY_USERD_DEFAULT_ORDERID @"KEY_USERD_DEFAULT_ORDERID"
+#define KEY_GENERAL_PIN @"KEY_GENERAL_PIN"
+#define KEY_STORE_NAME @"KEY_STORE_NAME"
+#define KEY_TILL_NAME @"KEY_TILL_NAME"
+#define KEY_GENERAL_TIMEOUT @"KEY_GENERAL_TIMEOUT"
+#define KEY_CREATE_SHIPMENT @"KEY_CREATE_SHIPMENT"
+#define KEY_CHANGE_VALUE_CREATE_SHIPMENT @"KEY_CHANGE_VALUE_CREATE_SHIPMENT"
+#define KEY_LOAD_APP_FIRST_TIME @"KEY_LOAD_APP_FIRST_TIME" 
+#define KEY_DEFAULT_PAYMENT_METHOD @"default_payment_method"
+#define KEY_DEVICE_TRIAL_ID @"DEVICE_TRIAL_ID"
+#define KEY_CHECK_USE_TRIAL @"0"
+#define KEY_CHECK_USE_TRY_DEMO @"0"
+#define KEY_HIDE_DEMO_BUTTON @"KEY_HIDE_DEMO_BUTTON"
+
+//Default Font Name & Font Color
+#define FONT_COLOR_DEFAULT  [UIColor colorWithRed:0.000f green:0.000f blue:0.000f alpha:1.00f]
+#define FONT_DEFAULT [UIFont fontWithName:@"CenturyGothic-Bold" size:18.0]
+
+#define THEME_COLOR_DEFAULT @"THEME_COLOR_DEFAULT"
+
+#ifdef DEBUG
+#define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#else
+#define DLog(...)
+#endif
+
+#endif
+
+
