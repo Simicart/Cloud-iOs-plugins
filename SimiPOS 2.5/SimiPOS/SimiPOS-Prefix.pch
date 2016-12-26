@@ -38,6 +38,12 @@
 #define WINDOW_HEIGHT [UIScreen mainScreen].applicationFrame.size.height
 #define WINDOW_WIDTH [UIScreen mainScreen].applicationFrame.size.width
 
+//Ravi
+#define POS_SYSTEM_IOS [[UIDevice currentDevice].systemVersion floatValue]
+#define SCREEN_WIDTH    ((POS_SYSTEM_IOS >= 8)?[[UIScreen mainScreen] bounds].size.width:[[UIScreen mainScreen] bounds].size.width)
+#define SCREEN_HEIGHT   ((POS_SYSTEM_IOS >= 8)?[[UIScreen mainScreen] bounds].size.height:[[UIScreen mainScreen] bounds].size.height)
+//End
+
 //config database
 //Import MagicalRecord Sources
 #define MR_SHORTHAND

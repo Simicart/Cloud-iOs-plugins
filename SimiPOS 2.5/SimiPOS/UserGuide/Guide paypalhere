@@ -1,0 +1,39 @@
+Follow steps below:
+1 - add forder PayPalHere in forder Libs
+2 - add forder MBProgressHUD in forder Libs
+3 - add forder PayPalHereViewController in ViewControllers
+
+
+Add lib in build phases:
+        xml2
+        sqlite3
+        stdc++
+        z
+        AVFoundation
+        AudioToolbox
+        CFNetwork
+        CoreBluetooth
+        CoreTelephony
+        ExternalAccessory
+        Foundation
+        MediaPlayer
+        MobileCoreServices
+        Security
+        SystemConfiguration
+
+
+Files change or add new:
+    Add new:
+
+
+
+    Change: (with tag )
+    Addin SimiPOS-Info.plist
+
+    Supported external accessory protocols  (array)
+    com.paypal.here.reader                  (item 0)
+
+
+
+
+Flow:

@@ -89,6 +89,20 @@
             [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
         }
     } else {
+//        UIViewController *viewController = [UIViewController new];
+//        [viewController.view setFrame:CGRectMake(0, 0, 300, 300)];
+//        [viewController.view setBackgroundColor:[UIColor redColor]];
+//        
+//        UIImageView * imageView = [UIImageView new];
+//        imageView.image = [self.delegate printViewController:self];
+//        [imageView setFrame:CGRectMake(0, 0, 300, 300)];
+//        
+//        [viewController.view addSubview:imageView];
+//        
+//        UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:viewController];
+//        
+//        [popover presentPopoverFromRect:CGRectMake(0, 0, 30, 30) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        
         // Print & open cash drawer
         @try {
             [self PrintImageWithPortname:[[Configuration globalConfig] objectForKey:@"tsp_portName"] portSettings:@"Standard" imageToPrint:[self.delegate printViewController:self] maxWidth:576 compressionEnable:YES withDrawerKick:[[[Configuration globalConfig] objectForKey:@"open_cash_drawer"] boolValue]];

@@ -155,7 +155,7 @@ static const CGFloat MAX_TRIGGER_OFFSET = 100.0;
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad{
     [super viewDidLoad];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gestureRecognizerDidTap:) name:@"tapLockKey" object:nil];
     if (_rootViewController && !_rootViewController.view.superview)
     {
         // Then we have probably received memory warning

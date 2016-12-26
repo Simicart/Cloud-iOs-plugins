@@ -1,0 +1,27 @@
+Follow steps below:
+1 - add forder IDTech in forder Libs
+2 - add forder IDTechSwipeViewController in ViewControllers
+3 - change build setting: Build Active Architecture Only : Debug = YES
+
+
+Files change or add new:
+    Add new:    IDTechSwipeViewController.h
+                IDTechSwipeViewController.m
+                IDTECH_UniMag.a
+                uniMag.h
+    Change: (with tag "payment authorize.net")
+                CheckoutViewController.m
+                Payment.m
+                PaymentViewController.m
+
+
+Flow:
+1 - Goto page checkout
+2 - Chose payment "Credit Card (authorize.net)"
+3 - Input card info
+4 - Place order
+
+or
+
+3 - Tap row "Payment with swipeCard" to active cardreader
+4 - Swipe card : auto place order

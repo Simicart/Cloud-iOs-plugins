@@ -57,22 +57,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SimiPOS/LoginFormViewController.m"
-            timestampString = "482990187.120674"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "338"
-            endingLineNumber = "338"
-            landmarkName = "-checkLoginMageStore"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SimiPOS/AccountViewController.m"
             timestampString = "481783872.131327"
             startingColumnNumber = "9223372036854775807"
@@ -170,7 +154,7 @@
                   moduleName = "SimiPOS"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/Data/TRUEPLUS/Magento-POS/SimiPOS%202.5/SimiPOS/ActivateKeyViewController.m"
-                  timestampString = "482999440.90975"
+                  timestampString = "484067848.786425"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "314"
@@ -185,7 +169,7 @@
                   moduleName = "SimiPOS"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Volumes/Data/TRUEPLUS/Magento-POS/SimiPOS%202.5/SimiPOS/ActivateKeyViewController.m"
-                  timestampString = "482999440.909911"
+                  timestampString = "484067848.786579"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "315"
